@@ -1,0 +1,48 @@
+# Node Modules
+node_modules/
+
+# Logs
+logs/
+*.log
+logs/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment Variables
+.env
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Build and Output Directories
+backend/dist/
+backend/build/
+frontend/dist/
+frontend/build/
+
+# MongoDB Data
+backend/dump/
+backend/data/
+
+# IDE Files
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Coverage Directory
+coverage/
+
+# Production Bundles
+*.cache/
+*.parcel-cache/
+
+# Temporary Files
+*.swp
+*.swo
+*.tmp
