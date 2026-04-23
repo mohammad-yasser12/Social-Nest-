@@ -49,14 +49,15 @@ const Inbox = () => {
             onClick={() => navigate(`/messages/${conv._id}`)}
             className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
           >
-            <img
-              src={
-                otherUser?.profilePicture ||
-                "https://via.placeholder.com/40"
-              }
-              alt=""
-              className="w-10 h-10 rounded-full"
-            />
+           <img
+  src={
+    otherUser?.profilepicture
+      ? `http://localhost:3039${otherUser.profilepicture}`
+      : "https://via.placeholder.com/40"
+  }
+  alt="profile"
+  className="w-10 h-10 rounded-full object-cover"
+/>
 
             <div>
               <p className="font-semibold">

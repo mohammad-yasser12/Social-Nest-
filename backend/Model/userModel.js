@@ -12,6 +12,11 @@ const UserSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],   // added
     likedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],  // optional tracking
     sharedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }], // optional tracking
+    privateAccount: { type: Boolean, default: false },
+
+followRequests: [
+  { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+],
     date: { type: Date, default: Date.now },
 });
 

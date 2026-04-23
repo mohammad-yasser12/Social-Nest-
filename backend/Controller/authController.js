@@ -2,7 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../Model/userModel.js';
 import Post from '../Model/postModel.js';
-
+import FollowRequest from '../Model/FollowRequest.js';
+import Notification from '../Model/notificationModel.js';
 import multer from 'multer';
 
 import fs from 'fs';
@@ -205,5 +206,278 @@ export const getUserWithPosts = async (req, res) => {
       });
   } catch (err) {
       res.status(500).json({ message: 'Failed to fetch user profile', error: err.message });
+  }
+};
+
+// POST /api/auth/follow/:id
+export const followUser = async (req, res) => {
+  try {
+    const senderId = req.user.user_id;
+    const receiverId = req.params.id;
+
+    // ❌ Prevent self-follow
+    if (senderId === receiverId) {
+      return res.status(400).json({ message: "You can't follow yourself" });
+    }
+
+    // ❌ Check existing request
+    const existing = await FollowRequest.findOne({
+      sender: senderId,
+      receiver: receiverId,
+    });
+
+    if (existing) {
+      return res.status(400).json({ message: "Request already exists" });
+    }
+
+    // ✅ Create request
+    const request = await FollowRequest.create({
+      sender: senderId,
+      receiver: receiverId,
+      status: "pending",
+    });
+
+    res.status(201).json({
+      success: true,
+      data: request,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Follow request failed" });
+  }
+};
+
+// POST /api/auth/unfollow/:id
+export const unfollowUser = async (req, res) => {
+  try {
+    const currentUserId = req.user.user_id;
+    const targetUserId = req.params.id;
+
+    await User.findByIdAndUpdate(currentUserId, {
+      $pull: { following: targetUserId },
+    });
+
+    await User.findByIdAndUpdate(targetUserId, {
+      $pull: { followers: currentUserId },
+    });
+
+    // optional: delete request
+    await FollowRequest.findOneAndDelete({
+      sender: currentUserId,
+      receiver: targetUserId,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: "Unfollow failed" });
+  }
+};
+
+
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const currentUserId = req.user?.user_id;
+
+    if (!currentUserId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const users = await User.find({
+      _id: { $ne: currentUserId },
+    }).select("username email profilepicture");
+
+    const usersWithFollowStatus = await Promise.all(
+      users.map(async (user) => {
+        const request = await FollowRequest.findOne({
+          sender: currentUserId,
+          receiver: user._id,
+        });
+
+        let followStatus = "none";
+
+        if (request) {
+          followStatus = request.status; // pending / accepted / rejected
+        }
+
+        return {
+          ...user.toObject(),
+          followStatus,
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      data: usersWithFollowStatus,
+    });
+  } catch (err) {
+    console.log("ERROR:", err);
+    res.status(500).json({
+      message: "Failed to fetch users",
+    });
+  }
+};
+
+export const getFollowers = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId)
+      .populate("followers", "username profilepicture");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user.followers,
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error fetching followers" });
+  }
+};
+
+
+
+
+// ================= ACCEPT REQUEST =================
+// POST /api/auth/accept/:requestId
+export const acceptFollowRequest = async (req, res) => {
+  try {
+    const requestId = req.params.id;
+
+    const request = await FollowRequest.findById(requestId)
+      .populate("receiver", "username");
+
+    if (!request) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    // ✅ Update request status
+    request.status = "accepted";
+    await request.save();
+
+    // ✅ Update users
+    await User.findByIdAndUpdate(request.sender, {
+      $push: { following: request.receiver },
+    });
+
+    await User.findByIdAndUpdate(request.receiver._id, {
+      $push: { followers: request.sender },
+    });
+
+    // 🔥 CREATE NOTIFICATION FOR SENDER
+    await Notification.create({
+      user: request.sender, // sender gets notification
+      message: `${request.receiver.username} accepted your follow request`,
+      type: "follow_accept",
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Accept failed" });
+  }
+};
+// ================= REJECT REQUEST =================
+// POST /api/auth/reject/:requestId
+export const rejectFollowRequest = async (req, res) => {
+  try {
+    const requestId = req.params.id;
+
+    const request = await FollowRequest.findById(requestId)
+      .populate("receiver", "username");
+
+    if (!request) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    // ✅ Update status
+    request.status = "rejected";
+    await request.save();
+
+    // 🔥 CREATE NOTIFICATION
+    await Notification.create({
+      user: request.sender,
+      message: `${request.receiver.username} rejected your follow request`,
+      type: "follow_reject",
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: "Reject failed" });
+  }
+};
+// ================= GET FOLLOW REQUESTS =================
+export const getFollowRequests = async (req, res) => {
+  try {
+    const userId = req.user.user_id; // from JWT middleware
+
+    const requests = await FollowRequest.find({
+      receiver: userId,
+      status: "pending",
+    })
+      .populate("sender", "username profilepicture") // show sender details
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: requests });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSentRequests = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+
+    const requests = await FollowRequest.find({
+      sender: userId,
+    })
+      .populate("receiver", "username profilepicture")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: requests });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getNotifications = async (req, res) => {
+  const userId = req.user.user_id;
+
+  const notifications = await Notification.find({ user: userId })
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, data: notifications });
+};
+
+export const markAsRead = async (req, res) => {
+  try {
+    const notificationId = req.params.id;
+    const userId = req.user.user_id;
+
+    const notification = await Notification.findById(notificationId);
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    // 🔐 Security check (VERY IMPORTANT)
+    if (notification.user.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // ✅ Mark as read
+    notification.isRead = true;
+    await notification.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to mark as read" });
   }
 };

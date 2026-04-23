@@ -6,7 +6,7 @@ import connectToDatabase from "./config/db.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./Router/authRouter.js";
 import postRouter from './Router/postRouter.js';
-
+import messageRouter from "./Router/MessageRouter.js";
 
 
 
@@ -50,6 +50,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
+app.use('/api/message', messageRouter);
 
 
 connectToDatabase()
