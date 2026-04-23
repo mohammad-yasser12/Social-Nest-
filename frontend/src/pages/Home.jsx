@@ -334,6 +334,8 @@
 // };
 
 // export default Home;
+
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -362,7 +364,7 @@ const Home = () => {
         fetchPosts();
     }, []);
 
-    const handleCreatePost = () => navigate('/createpost');
+   
 
     const handleLike = async (postId) => {
         try {
@@ -509,13 +511,9 @@ const Home = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="flex justify-between items-center w-full px-8 py-6 bg-white shadow-md">
-                <h2 className="text-3xl font-extrabold text-purple-600">SocialNest</h2>
-                <button
-                    onClick={handleCreatePost}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-full font-medium transition duration-300 shadow"
-                >
-                    Create Post
-                </button>
+              
+              
+              
             </div>
 
             <div className="w-full max-w-2xl mt-6 px-4">
@@ -719,3 +717,6 @@ const Home = () => {
 };
 
 export default Home;
+
+
+  

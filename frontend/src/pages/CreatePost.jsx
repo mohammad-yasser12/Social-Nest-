@@ -11,6 +11,10 @@ const CreatePost = () => {
 
   const navigate = useNavigate();
 
+  const handleSkip = () => {
+    navigate("/")
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -49,6 +53,7 @@ const CreatePost = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+     
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold text-purple-600 mb-6 text-center">Create Post</h2>
 
@@ -89,10 +94,14 @@ const CreatePost = () => {
 
           <button
             type="submit"
-            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-300"
+            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300"
           >
             Submit
           </button>
+           <button
+           onClick={handleSkip}
+            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-300"
+           >Skip</button>
         </form>
       </div>
     </div>
