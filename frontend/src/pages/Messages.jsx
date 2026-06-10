@@ -83,7 +83,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/messageApi";
-
+import { motion, AnimatePresence } from "framer-motion";
 const Messages = ({ conversationId }) => {
   const token = localStorage.getItem("token");
   const user = useSelector((state) => state.auth.user);
@@ -196,72 +196,85 @@ const handleDeleteForEveryone = async (messageId) => {
       {/* 💬 Messages */}
      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50">
   {messages
-    .filter((msg) => !msg.deletedFor?.includes(user?._id))
-    .map((msg) => (
-<div
-  key={msg._id}
-  className={`p-2 rounded max-w-xs ${
-    msg.sender?._id === user?._id
-      ? "bg-blue-500 text-white ml-auto"
-      : "bg-gray-300 text-black"
-  }`}
->
-  <div className="flex justify-between items-center gap-2">
-    
-    {/* ✅ TEXT */}
-    <div className="break-words">
-      {msg.isDeleted ? (
-        <span className="italic text-gray-400">
-          This message was deleted
-        </span>
-      ) : (
-        msg.text
-      )}
-    </div>
+  .filter((msg) => !msg.deletedFor?.includes(user?._id))
+  .map((msg) => {
 
-    {/* ✅ ARROW ICON */}
-    {!msg.isDeleted && (
-      <div className="relative" ref={dropdownRef}>
-        <button
-          onClick={() =>
-            setOpenMenuId(openMenuId === msg._id ? null : msg._id)
-          }
-        >
-          <FaChevronDown />
-        </button>
+    const isSender =
+      String(msg.sender?._id || msg.sender) === String(user?._id);
 
-        {openMenuId === msg._id && (
-          <div  className="absolute right-0 mt-1 bg-white text-black shadow rounded text-sm z-50">
-            
-            <div
-              onClick={() => {
-                handleDeleteForMe(msg._id);
-                setOpenMenuId(null);
-              }}
-                className="px-4 py-2 hover:bg-red-100 cursor-pointer whitespace-nowrap border-b border-gray-300"
-            >
-              Delete for me
-            </div>
+    return (
+      <motion.div
+        key={msg._id}
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25 }}
+        className={`p-2 rounded max-w-xs ${
+          msg.sender?._id === user?._id
+            ? "bg-blue-500 text-white ml-auto"
+            : "bg-gray-300 text-black"
+        }`}
+      >
+        <div className="flex justify-between items-center gap-2">
 
-            {msg.sender?._id === user?._id && (
-              <div
-                onClick={() => {
-                  handleDeleteForEveryone(msg._id);
-                  setOpenMenuId(null);
-                }}
-  className="px-4 py-2 hover:bg-red-100 cursor-pointer whitespace-nowrap"
-              >
-                Delete for everyone
-              </div>
+          {/* ✅ TEXT */}
+          <div className="break-words">
+            {msg.isDeleted ? (
+              <span className="italic text-gray-400">
+                This message was deleted
+              </span>
+            ) : (
+              msg.text
             )}
           </div>
-        )}
-      </div>
-    )}
-  </div>
-</div>
-    ))}
 
+          {/* ✅ DROPDOWN ICON */}
+          {!msg.isDeleted && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() =>
+                  setOpenMenuId(openMenuId === msg._id ? null : msg._id)
+                }
+              >
+                <FaChevronDown />
+              </button>
+
+              {openMenuId === msg._id && (
+                <div className="absolute right-0 mt-1 bg-white text-black shadow rounded text-sm z-50">
+
+                  {/* Delete for me */}
+                  <div
+                    onClick={() => {
+                      handleDeleteForMe(msg._id);
+                      setOpenMenuId(null);
+                    }}
+                    className="px-4 py-2 hover:bg-red-100 cursor-pointer whitespace-nowrap border-b border-gray-300"
+                  >
+                    Delete for me
+                  </div>
+
+                  {/* Delete for everyone (ONLY sender) */}
+                  {isSender && (
+                    <div
+                      onClick={() => {
+                        handleDeleteForEveryone(msg._id);
+                        setOpenMenuId(null);
+                      }}
+                      className="px-4 py-2 hover:bg-red-100 cursor-pointer whitespace-nowrap"
+                    >
+                      Delete for everyone
+                    </div>
+                  )}
+
+                </div>
+              )}
+            </div>
+          )}
+
+        </div>
+      </motion.div>
+    );
+  })}
   <div ref={bottomRef}></div>
 </div>
 

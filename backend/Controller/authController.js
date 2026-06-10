@@ -351,33 +351,40 @@ export const acceptFollowRequest = async (req, res) => {
     const requestId = req.params.id;
 
     const request = await FollowRequest.findById(requestId)
+      .populate("sender", "username profilepicture")
       .populate("receiver", "username");
 
     if (!request) {
       return res.status(404).json({ message: "Request not found" });
     }
 
-    // ✅ Update request status
     request.status = "accepted";
     await request.save();
 
-    // ✅ Update users
-    await User.findByIdAndUpdate(request.sender, {
-      $push: { following: request.receiver },
+    await User.findByIdAndUpdate(request.sender._id, {
+      $addToSet: { following: request.receiver },
     });
 
     await User.findByIdAndUpdate(request.receiver._id, {
-      $push: { followers: request.sender },
+      $addToSet: { followers: request.sender._id },
     });
 
-    // 🔥 CREATE NOTIFICATION FOR SENDER
     await Notification.create({
-      user: request.sender, // sender gets notification
+      user: request.sender._id,
       message: `${request.receiver.username} accepted your follow request`,
       type: "follow_accept",
     });
 
-    res.json({ success: true });
+    // ⭐ RETURN UPDATED DATA (IMPORTANT)
+    res.json({
+      success: true,
+      data: {
+        requestId: request._id,
+        sender: request.sender,
+        receiver: request.receiver,
+        status: request.status,
+      },
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Accept failed" });

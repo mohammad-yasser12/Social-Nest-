@@ -164,24 +164,30 @@ const FindFriends = () => {
   const [loading, setLoading] = useState(true);
 
   // ✅ Fetch all users
-  const fetchUsers = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:3039/api/auth/users",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+ const fetchUsers = async () => {
+  try {
+    const res = await axios.get("http://localhost:3039/api/auth/users", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
-      setUsers(res.data.data); // ✅ direct data
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const myId = JSON.parse(localStorage.getItem("user"))?._id;
+
+    const updatedUsers = res.data.data.map((u) => ({
+      ...u,
+      isFollowing: u.followers?.some(
+        (id) => id.toString() === myId
+      ),
+    }));
+
+    setUsers(updatedUsers);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ Follow user
   const handleFollowUser = async (id) => {
@@ -278,23 +284,32 @@ const handleMessages = async (receiverId) => {
 
             {/* 🔥 FOLLOW / UNFOLLOW BUTTON */}
             
-            <button
-              onClick={() =>
-                user.isFollowing
-                  ? handleUnfollowUser(user._id)
-                  : handleFollowUser(user._id)
-              }
-              className={`px-3 py-1 rounded-lg text-white ${
-                user.isFollowing
-                  ? "bg-gray-400 hover:bg-gray-500"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }`}
-            >
-              {user.isFollowing ? "Following" : "Follow"}
-            </button>
-          <button onClick={() => handleMessages(user._id)}>
-  <FaEnvelope />
+           <button
+  onClick={() =>
+    user.followStatus === "accepted"
+      ? handleUnfollowUser(user._id)
+      : handleFollowUser(user._id)
+  }
+  className={`px-3 py-1 rounded-lg text-white ${
+    user.followStatus === "accepted"
+      ? "bg-gray-400 hover:bg-gray-500"
+      : user.followStatus === "pending"
+      ? "bg-yellow-500"
+      : "bg-blue-500 hover:bg-blue-600"
+  }`}
+>
+  {user.followStatus === "accepted"
+    ? "Following"
+    : user.followStatus === "pending"
+    ? "Requested"
+    : "Follow"}
 </button>
+         {user.followStatus === "accepted" && (
+    <button onClick={() => handleMessages(user._id)}>
+      <FaEnvelope />
+    </button>
+  )}
+      
               
             </div>
           </div>

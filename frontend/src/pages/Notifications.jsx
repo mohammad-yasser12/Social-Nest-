@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import axios from "axios";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef(null);
 
   // ✅ Fetch notifications
   const fetchNotifications = async () => {
@@ -49,7 +51,24 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target)
+    ) {
+      setShowNotifications(false); // 👈 close
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
   return (
+    
     <div className="w-80 bg-white shadow-lg rounded-xl p-3">
       <h2 className="font-bold mb-3">Notifications</h2>
 
