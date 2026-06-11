@@ -1,96 +1,19 @@
-// import { useEffect, useState } from "react";
-// import { useSelector } from "react-redux";
-// import { getMessages, sendMessage } from "../api/messageApi";
 
-// const Messages = ({ conversationId }) => {
-//   const token = localStorage.getItem("token");
-//   const user = useSelector((state) => state.auth.user);
-
-//   const [messages, setMessages] = useState([]);
-//   const [text, setText] = useState("");
-
-//   // ✅ Fetch messages
-//   const fetchMessages = async () => {
-//     try {
-//       const res = await getMessages(conversationId, token);
-//       setMessages(res.data.messages);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (conversationId) {
-//       fetchMessages();
-//     }
-//   }, [conversationId]);
-
-//   // ✅ Send message
-//   const handleSend = async () => {
-//     if (!text.trim()) return;
-
-//     try {
-//       const res = await sendMessage(conversationId, text, token);
-
-//       setMessages((prev) => [...prev, res.data.message]);
-//       setText("");
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col h-[80vh] max-w-xl mx-auto border">
-
-//       {/* 💬 Messages */}
-//       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-//         {messages.map((msg) => (
-//           <div
-//             key={msg._id}
-//             className={`p-2 rounded max-w-xs ${
-//               msg.sender === user._id
-//                 ? "bg-blue-500 text-white ml-auto"
-//                 : "bg-gray-300 text-black"
-//             }`}
-//           >
-//             {msg.text}
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* ✍️ Input */}
-//       <div className="flex p-2 border-t">
-//         <input
-//           value={text}
-//           onChange={(e) => setText(e.target.value)}
-//           className="flex-1 border p-2 rounded"
-//           placeholder="Type a message..."
-//         />
-//         <button
-//           onClick={handleSend}
-//           className="ml-2 bg-blue-500 text-white px-4 rounded"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Messages;
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/messageApi";
 import { motion, AnimatePresence } from "framer-motion";
-const Messages = ({ conversationId }) => {
+const Messages = ({ conversationId, chatUser }) => {
+  console.log("chatUser", chatUser);
   const token = localStorage.getItem("token");
   const user = useSelector((state) => state.auth.user);
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [showImage, setShowImage] = useState(false);
 console.log("typing:", text);
   const bottomRef = useRef(null);
 
@@ -193,8 +116,41 @@ const handleDeleteForEveryone = async (messageId) => {
   return (
     <div className="flex flex-col h-[80vh] max-w-xl mx-auto border rounded shadow">
 
+     
       {/* 💬 Messages */}
      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50">
+
+      <div className="flex items-center gap-3 p-4 border-b bg-white">
+ <img
+  onClick={() => setShowImage(true)}
+  src={
+    chatUser?.profilepicture
+      ? `http://localhost:3039${chatUser.profilepicture}`
+      : "https://via.placeholder.com/40"
+  }
+  className="w-10 h-10 rounded-full object-cover cursor-pointer"
+/>
+{showImage && (
+  <div
+    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+    onClick={() => setShowImage(false)}
+  >
+    <img
+      src={
+        chatUser?.profilepicture
+          ? `http://localhost:3039${chatUser.profilepicture}`
+          : "https://via.placeholder.com/40"
+      }
+      className="w-64 h-64 object-cover rounded-lg shadow-lg"
+    />
+  </div>
+)}
+
+  <h2 className="font-semibold text-purple-600">
+    {chatUser?.username}
+  </h2>
+</div>
+
   {messages
   .filter((msg) => !msg.deletedFor?.includes(user?._id))
   .map((msg) => {

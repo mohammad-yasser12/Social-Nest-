@@ -162,6 +162,7 @@ const FindFriends = () => {
     const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState({});
 
   // ✅ Fetch all users
  const fetchUsers = async () => {
@@ -191,53 +192,83 @@ const FindFriends = () => {
 
   // ✅ Follow user
   const handleFollowUser = async (id) => {
-    try {
-      await axios.post(
-        `http://localhost:3039/api/auth/follow/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+  try {
+    await axios.post(
+      `http://localhost:3039/api/auth/follow/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
-      // 🔥 Update UI instantly
-      setUsers((prev) =>
-        prev.map((user) =>
-          user._id === id ? { ...user, isFollowing: true } : user
-        )
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    setUsers((prev) =>
+      prev.map((user) =>
+        user._id === id
+          ? { ...user, followStatus: "pending" }
+          : user
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   // ✅ Unfollow user
-  const handleUnfollowUser = async (id) => {
-    try {
-      await axios.post(
-        `http://localhost:3039/api/auth/unfollow/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+const handleUnfollowUser = async (id) => {
+  try {
+    await axios.post(
+      `http://localhost:3039/api/auth/unfollow/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
-      // 🔥 Update UI instantly
-      setUsers((prev) =>
-        prev.map((user) =>
-          user._id === id ? { ...user, isFollowing: false } : user
-        )
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    setUsers((prev) =>
+      prev.map((user) =>
+        user._id === id
+          ? { ...user, followStatus: null }
+          : user
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-const handleMessages = async (receiverId) => {
+const handleCancelRequest = async (id) => {
+  try {
+    await axios.post(
+      `http://localhost:3039/api/auth/cancel-follow/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setUsers((prev) =>
+      prev.map((user) =>
+        user._id === id
+          ? { ...user, followStatus: null }
+          : user
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const handleMessages = async (
+  receiverId,
+  username,
+  profilepicture
+) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -245,7 +276,13 @@ const handleMessages = async (receiverId) => {
 
     const conversationId = res.data.conversation._id;
 
-    navigate(`/messages/${conversationId}`); // ✅ correct
+    navigate(`/messages/${conversationId}`, {
+      state: {
+        receiverId,
+        username,
+        profilepicture,
+      },
+    });
   } catch (err) {
     console.log(err);
   }
@@ -284,17 +321,21 @@ const handleMessages = async (receiverId) => {
 
             {/* 🔥 FOLLOW / UNFOLLOW BUTTON */}
             
-           <button
-  onClick={() =>
-    user.followStatus === "accepted"
-      ? handleUnfollowUser(user._id)
-      : handleFollowUser(user._id)
-  }
+ <button
+  onClick={() => {
+    if (user.followStatus === "accepted") {
+      handleUnfollowUser(user._id);
+    } else if (user.followStatus === "pending") {
+      handleCancelRequest(user._id);
+    } else {
+      handleFollowUser(user._id);
+    }
+  }}
   className={`px-3 py-1 rounded-lg text-white ${
     user.followStatus === "accepted"
       ? "bg-gray-400 hover:bg-gray-500"
       : user.followStatus === "pending"
-      ? "bg-yellow-500"
+      ? "bg-yellow-500 hover:bg-yellow-600"
       : "bg-blue-500 hover:bg-blue-600"
   }`}
 >
@@ -305,9 +346,17 @@ const handleMessages = async (receiverId) => {
     : "Follow"}
 </button>
          {user.followStatus === "accepted" && (
-    <button onClick={() => handleMessages(user._id)}>
-      <FaEnvelope />
-    </button>
+   <button
+  onClick={() =>
+    handleMessages(
+      user._id,
+      user.username,
+      user.profilepicture
+    )
+  }
+>
+  <FaEnvelope />
+</button>
   )}
       
               

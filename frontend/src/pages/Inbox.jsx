@@ -28,7 +28,7 @@ const Inbox = () => {
 
   return (
     <div className="max-w-md mx-auto mt-5 border h-[80vh] overflow-y-auto">
-      <h2 className="text-xl font-bold p-4 border-b">Messages</h2>
+      <h2 className="text-xl font-bold p-4 border-b">Friends Chat List</h2>
 
       {conversations.length === 0 && (
         <p className="text-center mt-5 text-gray-500">
@@ -46,7 +46,15 @@ const Inbox = () => {
         return (
           <div
             key={conv._id}
-            onClick={() => navigate(`/messages/${conv._id}`)}
+           onClick={() =>
+  navigate(`/messages/${conv._id}`, {
+    state: {
+      receiverId: otherUser?._id,
+      username: otherUser?.username,
+      profilepicture: otherUser?.profilepicture,
+    },
+  })
+}
             className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
           >
            <img

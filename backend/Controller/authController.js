@@ -215,35 +215,32 @@ export const followUser = async (req, res) => {
     const senderId = req.user.user_id;
     const receiverId = req.params.id;
 
-    // ❌ Prevent self-follow
-    if (senderId === receiverId) {
-      return res.status(400).json({ message: "You can't follow yourself" });
-    }
-
-    // ❌ Check existing request
+    // check existing request
     const existing = await FollowRequest.findOne({
       sender: senderId,
       receiver: receiverId,
+      status: "pending",
     });
 
     if (existing) {
-      return res.status(400).json({ message: "Request already exists" });
+      return res.status(400).json({
+        message: "Request already exists",
+      });
     }
 
-    // ✅ Create request
     const request = await FollowRequest.create({
       sender: senderId,
       receiver: receiverId,
       status: "pending",
     });
 
-    res.status(201).json({
+    res.json({
       success: true,
       data: request,
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Follow request failed" });
+    res.status(500).json({ message: "Follow failed" });
   }
 };
 
@@ -350,9 +347,7 @@ export const acceptFollowRequest = async (req, res) => {
   try {
     const requestId = req.params.id;
 
-    const request = await FollowRequest.findById(requestId)
-      .populate("sender", "username profilepicture")
-      .populate("receiver", "username");
+    const request = await FollowRequest.findById(requestId);
 
     if (!request) {
       return res.status(404).json({ message: "Request not found" });
@@ -361,29 +356,17 @@ export const acceptFollowRequest = async (req, res) => {
     request.status = "accepted";
     await request.save();
 
-    await User.findByIdAndUpdate(request.sender._id, {
+    await User.findByIdAndUpdate(request.sender, {
       $addToSet: { following: request.receiver },
     });
 
-    await User.findByIdAndUpdate(request.receiver._id, {
-      $addToSet: { followers: request.sender._id },
+    await User.findByIdAndUpdate(request.receiver, {
+      $addToSet: { followers: request.sender },
     });
 
-    await Notification.create({
-      user: request.sender._id,
-      message: `${request.receiver.username} accepted your follow request`,
-      type: "follow_accept",
-    });
-
-    // ⭐ RETURN UPDATED DATA (IMPORTANT)
     res.json({
       success: true,
-      data: {
-        requestId: request._id,
-        sender: request.sender,
-        receiver: request.receiver,
-        status: request.status,
-      },
+      message: "Request accepted",
     });
   } catch (err) {
     console.log(err);
@@ -396,26 +379,21 @@ export const rejectFollowRequest = async (req, res) => {
   try {
     const requestId = req.params.id;
 
-    const request = await FollowRequest.findById(requestId)
-      .populate("receiver", "username");
+    const request = await FollowRequest.findById(requestId);
 
     if (!request) {
       return res.status(404).json({ message: "Request not found" });
     }
 
-    // ✅ Update status
     request.status = "rejected";
     await request.save();
 
-    // 🔥 CREATE NOTIFICATION
-    await Notification.create({
-      user: request.sender,
-      message: `${request.receiver.username} rejected your follow request`,
-      type: "follow_reject",
+    res.json({
+      success: true,
+      message: "Request rejected",
     });
-
-    res.json({ success: true });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Reject failed" });
   }
 };
@@ -453,13 +431,55 @@ export const getSentRequests = async (req, res) => {
   }
 };
 
+
+export const cancelFollowRequest = async (req, res) => {
+  try {
+    console.log("senderId:", req.user.user_id);
+    console.log("receiverId:", req.params.id);
+
+    const deleted = await FollowRequest.findOneAndDelete({
+      sender: req.user.user_id,
+      receiver: req.params.id,
+      status: "pending",
+    });
+
+    console.log("deleted:", deleted);
+
+    res.json({
+      success: true,
+      message: "Request cancelled",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
 export const getNotifications = async (req, res) => {
-  const userId = req.user.user_id;
+  try {
+    const userId = req.user.user_id;
 
-  const notifications = await Notification.find({ user: userId })
-    .sort({ createdAt: -1 });
+    const sevenDaysAgo = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    );
 
-  res.json({ success: true, data: notifications });
+    const notifications = await Notification.find({
+      user: userId,
+      createdAt: { $gte: sevenDaysAgo },
+    }).sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: notifications,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 export const markAsRead = async (req, res) => {
