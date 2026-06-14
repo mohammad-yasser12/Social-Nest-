@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API = "http://localhost:3039/api";
+import API from "../api/api";
+// const API = "https://social-nest-1-flyx.onrender.com/api";
 
 // ✅ Create or get conversation
 export const createOrGetConversation = async (receiverId, token) => {
@@ -38,7 +38,7 @@ export const getMessages = async (conversationId, token) => {
 };
 
 export const getConversations = async (token) => {
-  return axios.get("http://localhost:3039/api/message/conversation", {
+  return axios.get(`${API}/message/conversation`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

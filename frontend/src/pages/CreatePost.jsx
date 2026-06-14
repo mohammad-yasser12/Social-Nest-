@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Api from '../api/api';
 const CreatePost = () => {
   const [caption, setCaption] = useState('');
   const [content, setContent] = useState('');
@@ -34,7 +34,7 @@ const CreatePost = () => {
       const token = localStorage.getItem('token');
       console.log("reacttoken",token);
       
-      const res = await axios.post('http://localhost:3039/api/posts/create-post', formData, {
+      const res = await Api.post('/posts/create-post', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
          

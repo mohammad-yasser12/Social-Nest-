@@ -1,6 +1,6 @@
 import { useEffect, useState,useRef } from "react";
 import axios from "axios";
-
+import Api from "../api/Api";
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -9,14 +9,12 @@ const Notifications = () => {
   // ✅ Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3039/api/auth/notifications",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await Api.get('/auth/notifications', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+   
 
       setNotifications(res.data.data);
     } catch (err) {
@@ -27,13 +25,10 @@ const Notifications = () => {
   // ✅ Mark as read
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.put(
-        `http://localhost:3039/api/auth/notifications/read/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      await Api.put(`/auth/notifications/read/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         }
       );
 

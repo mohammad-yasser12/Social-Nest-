@@ -4,6 +4,7 @@ import { useEffect, useState,useRef } from "react";
 import axios from "axios";
 import Notifications from "../pages/Notifications";
 import { createOrGetConversation } from "../api/MessageApi";
+import Api from "../api/Api";
 import { 
   FaHome, 
   FaPlus, 
@@ -30,8 +31,8 @@ const user = useSelector((state) => state.auth.user);
     const [showNotifications, setShowNotifications] = useState(false);
         const fetchNotifications = async () => {
         try {
-            const res = await axios.get(
-                "http://localhost:3039/api/auth/notifications",
+            const res = await Api.get(
+                "https://social-nest-1-flyx.onrender.com/api/auth/notifications",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

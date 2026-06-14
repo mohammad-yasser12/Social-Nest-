@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/MessageApi";
 import { motion, AnimatePresence } from "framer-motion";
+import Api from "../api/Api";
 const Messages = ({ conversationId, chatUser }) => {
   console.log("chatUser", chatUser);
   const token = localStorage.getItem("token");
@@ -125,7 +126,7 @@ const handleDeleteForEveryone = async (messageId) => {
   onClick={() => setShowImage(true)}
   src={
     chatUser?.profilepicture
-      ? `http://localhost:3039${chatUser.profilepicture}`
+      ? `https://social-nest-1-flyx.onrender.com${chatUser.profilepicture}`
       : "https://via.placeholder.com/40"
   }
   className="w-10 h-10 rounded-full object-cover cursor-pointer"
@@ -138,7 +139,7 @@ const handleDeleteForEveryone = async (messageId) => {
     <img
       src={
         chatUser?.profilepicture
-          ? `http://localhost:3039${chatUser.profilepicture}`
+          ? `https://social-nest-1-flyx.onrender.com${chatUser.profilepicture}`
           : "https://via.placeholder.com/40"
       }
       className="w-64 h-64 object-cover rounded-lg shadow-lg"

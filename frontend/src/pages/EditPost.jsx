@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-
+import Api from '../api/api';
 const EditPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,12 +14,12 @@ const EditPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`http://localhost:3039/api/posts/${id}`);
+        const res = await Api.get(`/posts/${id}`);
         const { caption, content, image } = res.data.data;
 
         setEditCaption(caption);
         setEditContent(content);
-        setImagePreview(`http://localhost:3039/uploads/${image}`);
+        setImagePreview(`${Api.defaults.baseURL}/uploads/${image}`);
       } catch (err) {
         console.error('Error fetching post details for edit:', err);
       }
@@ -44,8 +44,8 @@ const EditPost = () => {
       formData.append('content', editContent);
       if (editImage) formData.append('image', editImage);
 
-      await axios.put(
-        `http://localhost:3039/api/posts/edit-post/${id}`,
+      await Api.put(
+        `/posts/edit-post/${id}`,
         formData,
         {
           headers: {

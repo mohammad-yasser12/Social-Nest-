@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { MoreVertical } from 'lucide-react';
 import LikeComponent from '../components/LikeComponent';
 import CommentComponent from '../components/CommentComponent';
-
+import Api from '../api/api';
 const PostDetails = () => {
   const { id } = useParams(); // Get post ID from the URL
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const PostDetails = () => {
   // Fetch post data from the backend
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`http://localhost:3039/api/posts/${id}`);
+      const res = await Api.get(`/posts/${id}`);
       setPost(res.data.data);
     } catch (err) {
       console.error('Error fetching post details:', err);
@@ -49,7 +49,7 @@ const PostDetails = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3039/api/posts/delete-post/${id}`, {
+      await Api.delete(`/posts/delete-post/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate('/'); // Redirect to home after deletion
@@ -78,7 +78,11 @@ const PostDetails = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3" onClick={() => navigate(`/user/${post.user?._id}`)}>
           <img
-            src={post.user?.profilepicture ? `http://localhost:3039${post.user.profilepicture}` : '/default-profile.jpg'}
+      src={
+  post.user?.profilepicture
+    ? `https://social-nest-1-flyx.onrender.com${post.user.profilepicture}`
+    : "/default-profile.png"
+}
             alt="Profile"
             className="w-10 h-10 rounded-full object-cover border"
           />
@@ -127,7 +131,7 @@ const PostDetails = () => {
 
       {post.image && (
         <img
-          src={`http://localhost:3039${post.image}`}
+       src={`https://social-nest-1-flyx.onrender.com${post.image}`}
           alt="Post"
           className="w-full h-64 object-cover rounded mb-4"
         />

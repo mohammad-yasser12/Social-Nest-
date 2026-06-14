@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { Pencil, Trash2, MoreVertical } from 'lucide-react';
 import { createOrGetConversation } from "../api/MessageApi";
-
+import Api from '../api/api';
 
 import CommentComponent from '../components/CommentComponent';
 import LikeComponent from '../components/LikeComponent';
@@ -31,7 +31,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUserAndPosts = async () => {
             try {
-                const res = await axios.get(`http://localhost:3039/api/auth/count/${id}`);
+                const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/count/${id}`);
                 setUser(res.data.user);
                 setPosts(res.data.posts);
                 setTotalLikes(res.data.totalLikes);
@@ -70,10 +70,10 @@ const UserProfile = () => {
 
     const handleDeleteProfilePicture = async () => {
         try {
-            await axios.delete(`http://localhost:3039/api/auth/delete-profile-picture/${id}`, {
+            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/auth/delete-profile-picture/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            const res = await axios.get(`http://localhost:3039/api/auth/count/${id}`);
+            const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/count/${id}`);
             setUser(res.data.user);
             setTotalLikes(res.data.totalLikes);
             setTotalPosts(res.data.totalPosts);
@@ -96,7 +96,7 @@ const UserProfile = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://localhost:3039/api/posts/delete-post/${postId}`, {
+            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/posts/delete-post/${postId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setPosts((prev) => prev.filter((post) => post._id !== postId));
@@ -112,7 +112,7 @@ const UserProfile = () => {
 
     const handleSort = async (type) => {
         try {
-            const res = await axios.get(`http://localhost:3039/api/posts/user/${id}?sort=${type}`, {
+            const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/posts/user/${id}?sort=${type}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setPosts([...res.data.data]);
@@ -162,7 +162,7 @@ const UserProfile = () => {
 
             <div className="flex flex-col items-center mb-6 relative">
                 <img
-                    src={user.profilepicture ? `http://localhost:3039${user.profilepicture}` : '/default-profile.jpg'}
+                    src={user.profilepicture ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}` : '/default-profile.jpg'}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover border mb-2"
                 />
@@ -250,7 +250,7 @@ const UserProfile = () => {
                                 )}
                             </div>
                             <img
-                                src={`http://localhost:3039${post.image}`}
+                                src={`https://social-nest-1-flyx.onrender.com${post.image}`}
                                 alt="Post"
                                 className="w-full h-auto rounded"
                             />

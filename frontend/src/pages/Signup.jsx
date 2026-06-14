@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Api from '../api/api';
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -33,7 +33,7 @@ const Signup = () => {
         data.append('profilepicture', profilepicture);
       }
 
-      const res = await axios.post('http://localhost:3039/api/auth/signup', data, {
+      const res = await Api.post('/auth/signup', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

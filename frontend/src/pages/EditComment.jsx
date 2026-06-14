@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import Api from '../api/api';
 
 const EditComment = () => {
     const { state } = useLocation();
@@ -12,8 +13,8 @@ const EditComment = () => {
 
     const handleUpdate = async () => {
         try {
-            const res = await axios.put(
-                `http://localhost:3039/api/posts/update/${comment._id}`,
+            const res = await Api.put(
+                `/posts/update/${comment._id}`,
                 { text },
                 {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

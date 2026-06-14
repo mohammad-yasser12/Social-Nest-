@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-
+import Api from '../api/Api';
 const LikeComponent = ({ post }) => {
     const [likes, setLikes] = useState(post.likes || []);
     const [likedUsers, setLikedUsers] = useState([]);
@@ -19,8 +19,8 @@ const LikeComponent = ({ post }) => {
                 ? likes.filter(id => id !== currentUserId)
                 : [...likes, currentUserId];
 
-            await axios.put(
-                `http://localhost:3039/api/posts/like/${post._id}`,
+            await Api.put(
+                `https://social-nest-1-flyx.onrender.com/api/posts/like/${post._id}`,
                 { likes: updatedLikes },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -34,8 +34,8 @@ const LikeComponent = ({ post }) => {
     const toggleLikesList = async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get(
-                `http://localhost:3039/api/posts/likes/${post._id}`,
+            const res = await Api.get(
+                `https://social-nest-1-flyx.onrender.com/api/posts/likes/${post._id}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -79,7 +79,7 @@ const LikeComponent = ({ post }) => {
                         likedUsers.map(user => (
                             <div key={user._id} className="flex items-center gap-2 mb-2">
                                 <img
-                                    src={`http://localhost:3039${user.profilepicture}`}
+                                    src={`https://social-nest-1-flyx.onrender.com${user.profilepicture}`}
                                     alt={user.username}
                                     className="w-8 h-8 rounded-full object-cover border"
                                 />

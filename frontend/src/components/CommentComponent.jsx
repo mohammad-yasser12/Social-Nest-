@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FiMoreVertical, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
+import Api from "../api/Api";
 const CommentComponent = ({ postId }) => {
   const navigate = useNavigate();
 
@@ -18,8 +18,8 @@ const CommentComponent = ({ postId }) => {
     if (showComments) {
       const fetchComments = async () => {
         try {
-          const res = await axios.get(
-            `http://localhost:3039/api/posts/comments/${postId}`,
+          const res = await Api.get(
+            `https://social-nest-1-flyx.onrender.com/api/posts/comments/${postId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -37,8 +37,8 @@ const CommentComponent = ({ postId }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(
-        `http://localhost:3039/api/posts/delete/${commentId}`,
+      await Api.delete(
+        `https://social-nest-1-flyx.onrender.com/api/posts/delete/${commentId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -56,8 +56,8 @@ const CommentComponent = ({ postId }) => {
     if (!text || !text.trim()) return;
 
     try {
-      const res = await axios.post(
-        `http://localhost:3039/api/posts/comment/${postId}`,
+      const res = await Api.post(
+        `https://social-nest-1-flyx.onrender.com/api/posts/comment/${postId}`,
         { text },
         {
           headers: {
@@ -134,7 +134,7 @@ const CommentComponent = ({ postId }) => {
               <div className="flex justify-between items-start">
                 <div className="flex gap-2 items-center">
                   <img
-                    src={`http://localhost:3039${comment.user?.profilepicture}`}
+                    src={`https://social-nest-1-flyx.onrender.com${comment.user?.profilepicture}`}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover border"
                   />

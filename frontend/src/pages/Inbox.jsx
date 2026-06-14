@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getConversations } from "../api/MessageApi";
-
+import Api from "../api/Api";
 const Inbox = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -60,7 +60,7 @@ const Inbox = () => {
            <img
   src={
     otherUser?.profilepicture
-      ? `http://localhost:3039${otherUser.profilepicture}`
+      ? `https://social-nest-1-flyx.onrender.com${otherUser.profilepicture}`
       : "https://via.placeholder.com/40"
   }
   alt="profile"

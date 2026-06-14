@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-
+import Api from '../api/Api';
 const Home = () => {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
@@ -20,7 +20,7 @@ const Home = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await axios.get('http://localhost:3039/api/posts/all-posts');
+                const res = await Api.get('https://social-nest-1-flyx.onrender.com/api/posts/all-posts');
                 setPosts(res.data.data || []);
             } catch (err) {
                 console.error('Error fetching posts:', err);
@@ -39,8 +39,8 @@ const Home = () => {
                 ? post.likes.filter(id => id !== currentUserId)
                 : [...post.likes, currentUserId];
 
-            await axios.put(
-                `http://localhost:3039/api/posts/like/${postId}`,
+            await Api.put(
+                `https://social-nest-1-flyx.onrender.com/api/posts/like/${postId}`,
                 { likes: updatedLikes },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -65,8 +65,8 @@ const Home = () => {
     const toggleLikesList = async (postId) => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get(
-                `http://localhost:3039/api/posts/likes/${postId}`,
+            const res = await Api.get(
+                `https://social-nest-1-flyx.onrender.com/api/posts/likes/${postId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -93,8 +93,8 @@ const Home = () => {
         if (!text) return;
 
         try {
-            const res = await axios.post(
-                `http://localhost:3039/api/posts/comment/${postId}`,
+            const res = await Api.post(
+                `https://social-nest-1-flyx.onrender.com/api/posts/comment/${postId}`,
                 { text },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -114,7 +114,7 @@ const Home = () => {
 
     const handleDeleteComment = async (postId, commentId) => {
         try {
-            await axios.delete(`http://localhost:3039/api/posts/delete/${commentId}`, {
+            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/posts/delete/${commentId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
 
@@ -138,8 +138,8 @@ const Home = () => {
         if (!newText) return;
 
         try {
-            const res = await axios.put(
-                `http://localhost:3039/api/posts/update/${commentId}`,
+            const res = await Api.put(
+                `https://social-nest-1-flyx.onrender.com/api/posts/update/${commentId}`,
                 { text: newText },
                 {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -192,7 +192,7 @@ const Home = () => {
                                 <div className="flex items-center gap-3 mb-4">
                                     <img
                                         onClick={() => navigate(`/user/${post.user?._id}`)}
-                                        src={`http://localhost:3039${post.user?.profilepicture}`}
+                                        src={`https://social-nest-1-flyx.onrender.com${post.user?.profilepicture}`}
                                         alt="Profile"
                                         className="w-8 h-8 rounded-full object-cover border cursor-pointer"
                                     />
@@ -204,7 +204,7 @@ const Home = () => {
                                 {post.image && (
                                     <img
                                         onClick={() => navigate(`/post/${post._id}`)}
-                                        src={`http://localhost:3039${post.image}`}
+                                        src={`https://social-nest-1-flyx.onrender.com${post.image}`}
                                         alt="Post"
                                         className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
                                     />
@@ -252,7 +252,7 @@ const Home = () => {
                                         {post.likedUsers.map(user => (
                                             <div key={user._id} className="flex items-center gap-2 mb-2">
                                                 <img
-                                                    src={`http://localhost:3039${user.profilepicture}`}
+                                                    src={`https://social-nest-1-flyx.onrender.com${user.profilepicture}`}
                                                     alt={user.username}
                                                     className="w-8 h-8 rounded-full object-cover border"
                                                 />
@@ -293,7 +293,7 @@ const Home = () => {
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex gap-2 items-center">
                                                                 <img
-                                                                    src={`http://localhost:3039${comment.user?.profilepicture}`}
+                                                                    src={`https://social-nest-1-flyx.onrender.com${comment.user?.profilepicture}`}
                                                                     alt="Profile"
                                                                     className="w-8 h-8 rounded-full object-cover border cursor-pointer"
                                                                 />

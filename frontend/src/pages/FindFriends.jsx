@@ -5,7 +5,7 @@ import axios from "axios";
 import { FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createOrGetConversation } from "../api/MessageApi";
-
+import Api from "../api/Api";
 const FindFriends = () => {
     const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -15,7 +15,7 @@ const FindFriends = () => {
   // ✅ Fetch all users
  const fetchUsers = async () => {
   try {
-    const res = await axios.get("http://localhost:3039/api/auth/users", {
+    const res = await Api.get("https://social-nest-1-flyx.onrender.com/api/auth/users", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -41,8 +41,8 @@ const FindFriends = () => {
   // ✅ Follow user
   const handleFollowUser = async (id) => {
   try {
-    await axios.post(
-      `http://localhost:3039/api/auth/follow/${id}`,
+    await Api.post(
+      `https://social-nest-1-flyx.onrender.com/api/auth/follow/${id}`,
       {},
       {
         headers: {
@@ -66,8 +66,8 @@ const FindFriends = () => {
   // ✅ Unfollow user
 const handleUnfollowUser = async (id) => {
   try {
-    await axios.post(
-      `http://localhost:3039/api/auth/unfollow/${id}`,
+    await Api.post(
+      `https://social-nest-1-flyx.onrender.com/api/auth/unfollow/${id}`,
       {},
       {
         headers: {
@@ -90,8 +90,8 @@ const handleUnfollowUser = async (id) => {
 
 const handleCancelRequest = async (id) => {
   try {
-    await axios.post(
-      `http://localhost:3039/api/auth/cancel-follow/${id}`,
+    await Api.post(
+      `https://social-nest-1-flyx.onrender.com/api/auth/cancel-follow/${id}`,
       {},
       {
         headers: {
@@ -157,7 +157,7 @@ const handleMessages = async (
             <img
   src={
     user?.profilepicture
-      ? `http://localhost:3039${user.profilepicture}`
+      ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
       : "/default.png"
   }
   alt="profile"

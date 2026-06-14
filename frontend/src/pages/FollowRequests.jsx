@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import Api from "../api/Api";
 const FollowRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,8 +8,8 @@ const FollowRequests = () => {
   // ✅ Fetch requests
   const fetchRequests = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3039/api/auth/follow-requests",
+      const res = await Api.get(
+        "https://social-nest-1-flyx.onrender.com/api/auth/follow-requests",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,8 +30,8 @@ const FollowRequests = () => {
   // ✅ Accept
   const handleAccept = async (id) => {
     try {
-      await axios.post(
-        `http://localhost:3039/api/auth/accept-request/${id}`,
+      await Api.post(
+        `https://social-nest-1-flyx.onrender.com/api/auth/accept-request/${id}`,
         {},
         {
           headers: {
@@ -49,8 +49,8 @@ const FollowRequests = () => {
   // ✅ Reject
   const handleReject = async (id) => {
     try {
-      await axios.post(
-        `http://localhost:3039/api/auth/reject-request/${id}`,
+      await Api.post(
+        `https://social-nest-1-flyx.onrender.com/api/auth/reject-request/${id}`,
         {},
         {
           headers: {
@@ -89,7 +89,7 @@ const FollowRequests = () => {
                 <img
                   src={
                     user.sender?.profilepicture
-                      ? `http://localhost:3039${user.sender.profilepicture}`
+                      ? `https://social-nest-1-flyx.onrender.com${user.sender.profilepicture}`
                       : "/default.png"
                   }
                   alt="profile"

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../features/authSlice'; // adjust path
 import { useNavigate } from 'react-router-dom';
-
+import Api from '../api/api';
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3039/api/auth/login', formData);
+      const res = await Api.post('/auth/login', formData);
 
       const { token, user } = res.data;
 

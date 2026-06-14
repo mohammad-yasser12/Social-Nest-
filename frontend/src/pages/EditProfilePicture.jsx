@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import Api from '../api/Api';
 const EditProfilePicture = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -17,12 +17,12 @@ const EditProfilePicture = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get(`http://localhost:3039/api/auth/${id}`);
+                const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/${id}`);
                 const user = res.data.user;
                 setUsername(user.username);
                 setInitialUsername(user.username);
-                setPreview(`http://localhost:3039${user.profilepicture}`);
-                setInitialPreview(`http://localhost:3039${user.profilepicture}`);
+                setPreview(`https://social-nest-1-flyx.onrender.com${user.profilepicture}`);
+                setInitialPreview(`https://social-nest-1-flyx.onrender.com${user.profilepicture}`);
             } catch (err) {
                 console.error('Error fetching user', err);
             }
@@ -48,8 +48,8 @@ const EditProfilePicture = () => {
         formData.append('username', username);
 
         try {
-            await axios.put(
-                `http://localhost:3039/api/auth/update-profile-picture/${id}`,
+            await Api.put(
+                `https://social-nest-1-flyx.onrender.com/api/auth/update-profile-picture/${id}`,
                 formData,
                 {
                     headers: {
