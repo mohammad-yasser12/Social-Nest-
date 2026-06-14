@@ -7,7 +7,7 @@ import { createOrGetConversation } from "../api/MessageApi";
 
 
 import CommentComponent from '../components/CommentComponent';
-import LikeComponent from '../components/likeComponent';
+import LikeComponent from '../components/LikeComponent';
 
 
 const UserProfile = () => {
