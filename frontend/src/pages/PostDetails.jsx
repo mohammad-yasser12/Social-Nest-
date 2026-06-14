@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { MoreVertical } from 'lucide-react';
-import LikeComponent from '../components/likeComponent';
+import LikeComponent from '../components/LikeComponent';
 import CommentComponent from '../components/CommentComponent';
 
 const PostDetails = () => {
