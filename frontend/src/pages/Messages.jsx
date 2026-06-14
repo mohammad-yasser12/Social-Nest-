@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
-import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/messageApi";
+import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/MessageApi";
 import { motion, AnimatePresence } from "framer-motion";
 const Messages = ({ conversationId, chatUser }) => {
   console.log("chatUser", chatUser);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getConversations } from "../api/messageApi";
+import { getConversations } from "../api/MessageApi";
 
 const Inbox = () => {
   const navigate = useNavigate();
