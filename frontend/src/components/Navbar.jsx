@@ -3,7 +3,7 @@ import { useSelector,useDispatch } from "react-redux";
 import { useEffect, useState,useRef } from "react";
 import axios from "axios";
 import Notifications from "../pages/Notifications";
-import { createOrGetConversation } from "../api/messageApi";
+import { createOrGetConversation } from "../api/MessageApi";
 import { 
   FaHome, 
   FaPlus, 
