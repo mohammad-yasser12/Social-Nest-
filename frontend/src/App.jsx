@@ -9,7 +9,7 @@ import UserProfile from './pages/UserProfile';
 import EditPost from './pages/EditPost';
 import EditProfilePicture from './pages/EditProfilePicture';
 import EditComment from './pages/EditComment';
-import LikeComponent from './components/likeComponent';
+import LikeComponent from "./components/LikeComponent";
 import CommentComponent from './components/CommentComponent';
 import Navbar from './components/Navbar';
 import FindFriends from './pages/FindFriends';
