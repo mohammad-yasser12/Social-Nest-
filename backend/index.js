@@ -23,7 +23,7 @@ import path from 'path';
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3039;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,9 +63,8 @@ connectToDatabase()
 
     })
 
-   
-app.listen(PORT, () => {
-    console.log(`server is running on ${PORT}`);
 
-})
+app.listen(PORT, () => {
+  console.log(`server is running on ${PORT}`);
+});
 
