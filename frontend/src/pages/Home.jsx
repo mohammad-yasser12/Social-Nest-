@@ -16,12 +16,15 @@ const Home = () => {
     const [commentMenuOpen, setCommentMenuOpen] = useState({});
     const [openLikes, setOpenLikes] = useState({});
     const currentUserId = useSelector(state => state.auth.user?._id);
+    console.log("Posts state:", posts);
+console.log("Posts length:", posts.length);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const res = await Api.get("/posts/all-posts");
                 setPosts(res.data.data || []);
+                console.log("API posts:", res.data.data);
             } catch (err) {
                 console.error('Error fetching posts:', err);
             }

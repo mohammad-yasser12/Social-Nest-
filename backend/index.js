@@ -32,12 +32,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend-url.vercel.app",
+      "https://social-nest-seven.vercel.app",
     ],
     credentials: true,
   })
 );
-
   
 
 app.use(morgan("tiny"));
