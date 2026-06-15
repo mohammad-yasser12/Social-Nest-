@@ -15,7 +15,7 @@ const FindFriends = () => {
   // ✅ Fetch all users
  const fetchUsers = async () => {
   try {
-    const res = await Api.get("https://social-nest-1-flyx.onrender.com/api/auth/users", {
+    const res = await Api.get("/auth/users", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -42,7 +42,7 @@ const FindFriends = () => {
   const handleFollowUser = async (id) => {
   try {
     await Api.post(
-      `https://social-nest-1-flyx.onrender.com/api/auth/follow/${id}`,
+      `/auth/follow/${id}`,
       {},
       {
         headers: {
@@ -67,7 +67,7 @@ const FindFriends = () => {
 const handleUnfollowUser = async (id) => {
   try {
     await Api.post(
-      `https://social-nest-1-flyx.onrender.com/api/auth/unfollow/${id}`,
+      `/auth/unfollow/${id}`,
       {},
       {
         headers: {
@@ -91,7 +91,7 @@ const handleUnfollowUser = async (id) => {
 const handleCancelRequest = async (id) => {
   try {
     await Api.post(
-      `https://social-nest-1-flyx.onrender.com/api/auth/cancel-follow/${id}`,
+      `/auth/cancel-follow/${id}`,
       {},
       {
         headers: {

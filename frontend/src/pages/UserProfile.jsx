@@ -31,7 +31,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUserAndPosts = async () => {
             try {
-                const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/count/${id}`);
+                const res = await Api.get(`/auth/count/${id}`);
                 setUser(res.data.user);
                 setPosts(res.data.posts);
                 setTotalLikes(res.data.totalLikes);
@@ -70,10 +70,10 @@ const UserProfile = () => {
 
     const handleDeleteProfilePicture = async () => {
         try {
-            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/auth/delete-profile-picture/${id}`, {
+            await Api.delete(`/auth/delete-profile-picture/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/count/${id}`);
+            const res = await Api.get(`/auth/count/${id}`);
             setUser(res.data.user);
             setTotalLikes(res.data.totalLikes);
             setTotalPosts(res.data.totalPosts);
@@ -96,7 +96,7 @@ const UserProfile = () => {
         if (!confirmDelete) return;
 
         try {
-            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/posts/delete-post/${postId}`, {
+            await Api.delete(`/posts/delete-post/${postId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setPosts((prev) => prev.filter((post) => post._id !== postId));
@@ -112,7 +112,7 @@ const UserProfile = () => {
 
     const handleSort = async (type) => {
         try {
-            const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/posts/user/${id}?sort=${type}`, {
+            const res = await Api.get(`/posts/user/${id}?sort=${type}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setPosts([...res.data.data]);

@@ -32,7 +32,7 @@ const user = useSelector((state) => state.auth.user);
         const fetchNotifications = async () => {
         try {
             const res = await Api.get(
-                "https://social-nest-1-flyx.onrender.com/api/auth/notifications",
+                "/auth/notifications",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

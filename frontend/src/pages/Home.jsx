@@ -20,7 +20,7 @@ const Home = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await Api.get('https://social-nest-1-flyx.onrender.com/api/posts/all-posts');
+                const res = await Api.get("/posts/all-posts");
                 setPosts(res.data.data || []);
             } catch (err) {
                 console.error('Error fetching posts:', err);
@@ -40,7 +40,7 @@ const Home = () => {
                 : [...post.likes, currentUserId];
 
             await Api.put(
-                `https://social-nest-1-flyx.onrender.com/api/posts/like/${postId}`,
+                `/posts/like/${postId}`,
                 { likes: updatedLikes },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -66,7 +66,7 @@ const Home = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await Api.get(
-                `https://social-nest-1-flyx.onrender.com/api/posts/likes/${postId}`,
+                `/posts/likes/${postId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ const Home = () => {
 
         try {
             const res = await Api.post(
-                `https://social-nest-1-flyx.onrender.com/api/posts/comment/${postId}`,
+                `/posts/comment/${postId}`,
                 { text },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -114,7 +114,7 @@ const Home = () => {
 
     const handleDeleteComment = async (postId, commentId) => {
         try {
-            await Api.delete(`https://social-nest-1-flyx.onrender.com/api/posts/delete/${commentId}`, {
+            await Api.delete(`/posts/delete/${commentId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
 
@@ -139,7 +139,7 @@ const Home = () => {
 
         try {
             const res = await Api.put(
-                `https://social-nest-1-flyx.onrender.com/api/posts/update/${commentId}`,
+                `/posts/update/${commentId}`,
                 { text: newText },
                 {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

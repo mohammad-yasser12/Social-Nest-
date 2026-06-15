@@ -20,7 +20,7 @@ const LikeComponent = ({ post }) => {
                 : [...likes, currentUserId];
 
             await Api.put(
-                `https://social-nest-1-flyx.onrender.com/api/posts/like/${post._id}`,
+                `/posts/like/${post._id}`,
                 { likes: updatedLikes },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -35,7 +35,7 @@ const LikeComponent = ({ post }) => {
         try {
             const token = localStorage.getItem("token");
             const res = await Api.get(
-                `https://social-nest-1-flyx.onrender.com/api/posts/likes/${post._id}`,
+                `/posts/likes/${post._id}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }

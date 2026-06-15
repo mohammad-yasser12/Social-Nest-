@@ -19,7 +19,7 @@ const CommentComponent = ({ postId }) => {
       const fetchComments = async () => {
         try {
           const res = await Api.get(
-            `https://social-nest-1-flyx.onrender.com/api/posts/comments/${postId}`,
+            `/posts/comments/${postId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,7 +38,7 @@ const CommentComponent = ({ postId }) => {
   const handleDeleteComment = async (commentId) => {
     try {
       await Api.delete(
-        `https://social-nest-1-flyx.onrender.com/api/posts/delete/${commentId}`,
+        `/posts/delete/${commentId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +57,7 @@ const CommentComponent = ({ postId }) => {
 
     try {
       const res = await Api.post(
-        `https://social-nest-1-flyx.onrender.com/api/posts/comment/${postId}`,
+        `/posts/comment/${postId}`,
         { text },
         {
           headers: {

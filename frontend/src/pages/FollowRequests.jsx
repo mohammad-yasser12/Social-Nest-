@@ -9,7 +9,7 @@ const FollowRequests = () => {
   const fetchRequests = async () => {
     try {
       const res = await Api.get(
-        "https://social-nest-1-flyx.onrender.com/api/auth/follow-requests",
+        "/auth/follow-requests",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -31,7 +31,7 @@ const FollowRequests = () => {
   const handleAccept = async (id) => {
     try {
       await Api.post(
-        `https://social-nest-1-flyx.onrender.com/api/auth/accept-request/${id}`,
+        `/auth/accept-request/${id}`,
         {},
         {
           headers: {
@@ -50,7 +50,7 @@ const FollowRequests = () => {
   const handleReject = async (id) => {
     try {
       await Api.post(
-        `https://social-nest-1-flyx.onrender.com/api/auth/reject-request/${id}`,
+        `/auth/reject-request/${id}`,
         {},
         {
           headers: {

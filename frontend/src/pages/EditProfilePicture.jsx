@@ -17,7 +17,7 @@ const EditProfilePicture = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await Api.get(`https://social-nest-1-flyx.onrender.com/api/auth/${id}`);
+                const res = await Api.get(`/auth/${id}`);
                 const user = res.data.user;
                 setUsername(user.username);
                 setInitialUsername(user.username);
