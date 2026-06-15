@@ -112,17 +112,17 @@ const handleCancelRequest = async (id) => {
   }
 };
 
-const handleMessages = async (
-  receiverId,
-  username,
-  profilepicture
-) => {
+const handleMessages = async (receiverId, username, profilepicture) => {
   try {
-    const token = localStorage.getItem("token");
+    const res = await createOrGetConversation(receiverId);
 
-    const res = await createOrGetConversation(receiverId, token);
+    const conversationId =
+      res?.data?.conversation?._id || res?.data?._id;
 
-    const conversationId = res.data.conversation._id;
+    if (!conversationId) {
+      console.log("Conversation ID not found", res.data);
+      return;
+    }
 
     navigate(`/messages/${conversationId}`, {
       state: {

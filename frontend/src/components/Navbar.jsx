@@ -29,22 +29,21 @@ const user = useSelector((state) => state.auth.user);
     // 🔔 NEW STATE
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
-        const fetchNotifications = async () => {
-        try {
-            const res = await Api.get(
-                "/auth/notifications",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+      const fetchNotifications = async () => {
+  try {
+    const res = await Api.get("/auth/notifications", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-            setNotifications(res.data.data);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    console.log("Notification response:", res.data);
+
+    setNotifications(res.data.data || []);
+  } catch (err) {
+    console.log("Notification error:", err);
+  }
+};
 
     useEffect(() => {
   const handleClickOutside = (event) => {

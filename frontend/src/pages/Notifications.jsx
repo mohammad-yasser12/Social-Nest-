@@ -9,11 +9,11 @@ const Notifications = () => {
   // ✅ Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const res = await Api.get('/auth/notifications', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+     const res = await API.get('/auth/notifications', {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
    
 
       setNotifications(res.data.data);

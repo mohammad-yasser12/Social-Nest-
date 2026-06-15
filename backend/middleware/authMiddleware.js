@@ -61,7 +61,7 @@ console.log("token",token);
     req.user = { user_id: decoded.user_id };
 
     console.log("Decoded User:", req.user);
-
+console.log(req.user);
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });

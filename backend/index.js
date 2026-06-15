@@ -29,11 +29,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(urlencoded({ extended: true }));
 app.use(
-    cors({
-      origin: "http://localhost:5173", // Your frontend URL
-      credentials: true, // Allow cookies and authentication headers
-    })
-  );
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://your-frontend-url.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
   
 

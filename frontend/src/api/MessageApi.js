@@ -3,9 +3,21 @@ import API from "../api/api";
 // const API = "https://social-nest-1-flyx.onrender.com/api";
 
 // ✅ Create or get conversation
+// export const createOrGetConversation = async (receiverId, token) => {
+//   return axios.post(
+//     `${API}/message/converzations`,
+//     { receiverId },
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     }
+//   );
+// };
+ 
 export const createOrGetConversation = async (receiverId, token) => {
-  return axios.post(
-    `${API}/message/converzations`,
+  return API.post(
+    "/message/conversations",
     { receiverId },
     {
       headers: {
@@ -16,9 +28,9 @@ export const createOrGetConversation = async (receiverId, token) => {
 };
 
 // ✅ Send message
-export const sendMessage = async (conversationId, text, token) => {
-  return axios.post(
-    `${API}/message/send`,
+export const sendMessage = (conversationId, text, token) => {
+  return API.post(
+    "/message/send",
     { conversationId, text },
     {
       headers: {
@@ -29,18 +41,26 @@ export const sendMessage = async (conversationId, text, token) => {
 };
 
 // ✅ Get messages
-export const getMessages = async (conversationId, token) => {
-  return axios.get(`${API}/message/${conversationId}`, {
+export const getMessages = (conversationId, token) => {
+  return API.get(`/message/${conversationId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
 
-export const getConversations = async (token) => {
-  return axios.get(`${API}/message/conversation`, {
+// export const getConversations = async (token) => {
+//   return axios.get(`${API}/message/conversation`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+// };
+
+export const getConversations = () => {
+  return API.get("/message/conversation", {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
