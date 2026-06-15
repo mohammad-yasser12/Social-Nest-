@@ -182,11 +182,13 @@ const Home = () => {
             </div>
 
             <div className="w-full max-w-2xl mt-6 px-4">
-                {posts.length === 0 ? (
+                {!Array.isArray(posts) || posts.length === 0 ?  (
                     <p className="text-gray-500 text-center">No posts available</p>
                 ) : (
                     posts.map(post => {
-                        const isLiked = post.likes?.includes(currentUserId);
+                      const isLiked = post.likes?.some(
+  (like) => like._id === currentUserId
+);
                         return (
                             <div key={post._id} className="bg-white rounded-lg shadow-md p-4 mb-6">
                                 <div className="flex items-center gap-3 mb-4">
@@ -292,12 +294,16 @@ const Home = () => {
                                                     <div key={comment._id} className="bg-gray-100 p-2 rounded-md mb-2 relative">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex gap-2 items-center">
-                                                                <img
-                                                                    src={`https://social-nest-1-flyx.onrender.com${comment.user?.profilepicture}`}
-                                                                    alt="Profile"
-                                                                    className="w-8 h-8 rounded-full object-cover border cursor-pointer"
-                                                                />
-                                                                <strong>{comment.user.username}</strong>
+                                                               <img
+  src={
+    comment.user?.profilepicture
+      ? `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
+      : "https://ui-avatars.com/api/?name=User"
+  }
+  alt="Profile"
+  className="w-8 h-8 rounded-full object-cover border cursor-pointer"
+/>
+                                                                <strong>{comment.user?.username || "User"}</strong>
                                                                 <span className="text-xs text-gray-500">
                                                                     {new Date(comment.createdAt).toLocaleString()}
                                                                 </span>
