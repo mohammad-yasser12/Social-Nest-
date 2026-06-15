@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Api from "../api/Api";
+import Api from "../api/api";
 const FollowRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);

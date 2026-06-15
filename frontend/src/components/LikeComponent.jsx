@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import Api from '../api/Api';
+import Api from '../api/api';
 const LikeComponent = ({ post }) => {
     const [likes, setLikes] = useState(post.likes || []);
     const [likedUsers, setLikedUsers] = useState([]);

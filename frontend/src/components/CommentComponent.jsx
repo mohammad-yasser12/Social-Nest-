@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FiMoreVertical, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Api from "../api/Api";
+import Api from "../api/api";
 const CommentComponent = ({ postId }) => {
   const navigate = useNavigate();
 

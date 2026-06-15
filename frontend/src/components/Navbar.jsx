@@ -4,7 +4,7 @@ import { useEffect, useState,useRef } from "react";
 import axios from "axios";
 import Notifications from "../pages/Notifications";
 import { createOrGetConversation } from "../api/MessageApi";
-import Api from "../api/Api";
+import Api from "../api/api";
 import { 
   FaHome, 
   FaPlus, 

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { getMessages, sendMessage,deleteForEveryone,deleteForMe } from "../api/MessageApi";
 import { motion, AnimatePresence } from "framer-motion";
-import Api from "../api/Api";
+import Api from "../api/api";
 const Messages = ({ conversationId, chatUser }) => {
   console.log("chatUser", chatUser);
   const token = localStorage.getItem("token");

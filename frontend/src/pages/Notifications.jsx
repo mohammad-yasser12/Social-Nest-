@@ -1,6 +1,6 @@
 import { useEffect, useState,useRef } from "react";
 import axios from "axios";
-import Api from "../api/Api";
+import Api from "../api/api";
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);

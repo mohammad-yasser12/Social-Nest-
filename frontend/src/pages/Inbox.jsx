@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getConversations } from "../api/MessageApi";
-import Api from "../api/Api";
+import Api from "../api/api";
 const Inbox = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");

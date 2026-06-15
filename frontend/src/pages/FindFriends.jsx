@@ -5,7 +5,7 @@ import axios from "axios";
 import { FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createOrGetConversation } from "../api/MessageApi";
-import Api from "../api/Api";
+import Api from "../api/api";
 const FindFriends = () => {
     const navigate = useNavigate();
   const [users, setUsers] = useState([]);
