@@ -30,19 +30,27 @@ const __dirname = path.dirname(__filename);
 app.use(urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://social-nest-seven.vercel.app",
-    ],
-    credentials: true,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://social-nest-seven.vercel.app",
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
   
 
 app.use(morgan("tiny"));
+app.options("*", cors());
 
-// app.use(express.static("public"));
-// app.use("/uploads", express.static("uploads"));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
