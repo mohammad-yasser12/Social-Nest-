@@ -15,41 +15,45 @@ const CreatePost = () => {
     navigate("/")
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccessMsg('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccessMsg("");
 
-    if (!caption || !image) {
-      setError('Caption and image are required');
+  if (!caption || !image) {
+    setError("Caption and image are required");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("caption", caption);
+  formData.append("content", content);
+  formData.append("image", image);
+
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Please login again");
       return;
     }
 
-    const formData = new FormData();
-    formData.append('caption', caption);
-    formData.append('content', content);
-    formData.append('image', image);
+    const res = await Api.post("/posts/create-post", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    try {
-      const token = localStorage.getItem('token');
-      console.log("reacttoken",token);
-      
-      const res = await Api.post('/posts/create-post', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-         
-        }
-      });
+    setSuccessMsg("Post created successfully!");
+    setCaption("");
+    setContent("");
+    setImage(null);
 
-      setSuccessMsg('Post created successfully!');
-      setCaption('');
-      setContent('');
-      setImage(null);
-      setTimeout(() => navigate('/'), 2000);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
-    }
-  };
+    setTimeout(() => navigate("/"), 2000);
+  } catch (err) {
+    setError(err.response?.data?.message || "Something went wrong");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">

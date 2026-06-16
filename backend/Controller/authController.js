@@ -4,30 +4,9 @@ import User from '../Model/userModel.js';
 import Post from '../Model/postModel.js';
 import FollowRequest from '../Model/FollowRequest.js';
 import Notification from '../Model/notificationModel.js';
-import multer from 'multer';
-
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import cloudinary from "../config/cloudinary.js";
 
 
-
-import { dirname } from 'path';
-import { log } from 'console';
-
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-});
-
-export const upload = multer({ storage: storage });
 
 
 
@@ -36,10 +15,11 @@ export const upload = multer({ storage: storage });
 export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    const profilepicture = req.file?.filename;
+
+    const profilepicture = req.file?.path; // Cloudinary URL
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,7 +28,7 @@ export const signup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      profilepicture:`/uploads/${profilepicture}`,
+      profilepicture, // store full Cloudinary URL
     });
 
     res.status(201).json(newUser);
@@ -127,68 +107,80 @@ export const getUserProfile = async (req, res) => {
 
 
 
-// // Utility to get __dirname in ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 
 export const updateProfilePicture = async (req, res) => {
   try {
     const { id } = req.params;
     const { username } = req.body;
+
     const user = await User.findById(id);
 
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     const updateData = { username };
 
-    // If profile picture is uploaded, update and delete old one
+    // If new image uploaded
     if (req.file) {
-      if (user.profilepicture && fs.existsSync(user.profilepicture.replace('/', ''))) {
-        fs.unlinkSync(user.profilepicture.replace('/', ''));
+      // OPTIONAL: delete old image from cloudinary
+      if (user.profilepicture) {
+        const parts = user.profilepicture.split("/");
+        const file = parts[parts.length - 1];
+        const publicId = file.split(".")[0];
+
+        await cloudinary.uploader.destroy(`socialnest/${publicId}`);
       }
-      updateData.profilepicture = `/uploads/${req.file.filename}`;
+
+      updateData.profilepicture = req.file.path; // Cloudinary URL
     }
 
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new: true,
-    }).select('-password');
+    }).select("-password");
 
     res.status(200).json({ user: updatedUser });
   } catch (err) {
-    res.status(500).json({ error: 'Error updating profile' });
+    res.status(500).json({ error: "Error updating profile" });
   }
 };
-
-
 
 export const deleteProfilePicture = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Step 1: Find the user by ID
     const user = await User.findById(id);
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Step 2: Check if the user has a profile picture
     if (!user.profilepicture) {
-      return res.status(404).json({ error: 'No profile picture to delete' });
+      return res.status(404).json({ error: "No profile picture to delete" });
     }
 
-    // Step 3: Remove the profile picture path from the database
-    user.profilepicture = ''; // Or you can use `null` instead of empty string
-    await user.save(); // Save the changes
+    // Delete from Cloudinary
+    const parts = user.profilepicture.split("/");
+    const file = parts[parts.length - 1];
+    const publicId = file.split(".")[0];
 
-    // Step 4: Send success response
-    res.status(200).json({ message: 'Profile picture deleted from database successfully' });
+    await cloudinary.uploader.destroy(`socialnest/${publicId}`);
 
+    // Remove from DB
+    user.profilepicture = "";
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile picture deleted successfully",
+    });
   } catch (err) {
-    console.error('Error during profile picture deletion:', err);
-    res.status(500).json({ error: 'Error deleting profile picture from database' });
+    console.error(err);
+    res.status(500).json({ error: "Error deleting profile picture" });
   }
 };
+
 
 export const getUserWithPosts = async (req, res) => {
   try {
