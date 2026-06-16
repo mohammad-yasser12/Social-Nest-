@@ -33,14 +33,22 @@ const Signup = () => {
         data.append('profilepicture', profilepicture);
       }
 
-      const res = await Api.post('/auth/signup', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+  const res = await Api.post('/auth/signup', data, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 
-      alert('Signup successful! Please login now.');
-      navigate('/login');
+// 🔥 SAVE TOKEN
+localStorage.setItem("token", res.data.token);
+
+// (optional) save user
+localStorage.setItem("user", JSON.stringify(res.data.user));
+
+alert('Signup successful!');
+
+// go to home
+navigate('/');
     } catch (error) {
       alert(error.response?.data?.message || 'Signup failed');
       console.error('Signup error:', error);
