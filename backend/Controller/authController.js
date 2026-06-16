@@ -9,7 +9,6 @@ import cloudinary from "../config/cloudinary.js";
 
 
 
-
 export const signup = async (req, res) => {
   try {
     console.log("🔥 SIGNUP HIT");
@@ -18,22 +17,20 @@ export const signup = async (req, res) => {
 
     const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
-      console.log("❌ Missing fields");
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    console.log("STEP 1 OK");
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("✅ Password hashed");
+
+    console.log("STEP 2 OK");
 
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
-      profilepicture: req.file?.path,
+      profilepicture: req.file?.path || "",
     });
 
-    console.log("✅ User created:", newUser._id);
+    console.log("STEP 3 OK");
 
     const token = jwt.sign(
       { user_id: newUser._id },
@@ -41,7 +38,7 @@ export const signup = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    console.log("✅ Token created");
+    console.log("STEP 4 OK");
 
     return res.status(201).json({
       message: "Signup successful",
@@ -54,7 +51,6 @@ export const signup = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
-
 
 export const login = async (req, res) => {
   try {
