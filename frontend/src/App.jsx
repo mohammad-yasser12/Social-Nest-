@@ -20,9 +20,9 @@ import Inbox from "./pages/Inbox";
 
 
 function App() {
-  const token = localStorage.getItem("token");
-  const isAuthenticated = token && token !== "undefined" && token !== "null";
-
+ const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user"));
+const isAuthenticated = !!token;
   return (
     <BrowserRouter>
      {isAuthenticated && <Navbar />}
