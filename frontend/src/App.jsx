@@ -25,15 +25,15 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Navbar />
+     {isAuthenticated && <Navbar />}
       <Routes>
         {/* Redirect based on login status */}
         <Route
-          path="/"
-          element={ <Home /> 
-          }
-        />
-
+  path="/"
+  element={
+    isAuthenticated ? <Home /> : <Navigate to="/signup" replace />
+  }
+/>
         {/* Public Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
