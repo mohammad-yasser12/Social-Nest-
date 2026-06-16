@@ -6,15 +6,17 @@ import { fileURLToPath } from "url";
 import cloudinary from "../config/cloudinary.js";
 
 export const createPost = async (req, res) => {
+  console.log("BODY:", req.body);
+console.log("FILE:", req.file);
   try {
     const { caption, content } = req.body;
 
     if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Image is required",
-      });
-    }
+  return res.status(400).json({
+    success: false,
+    message: "Image upload failed",
+  });
+}
 console.log("UPLOAD FILE:", req.file);
     const newPost = await Post.create({
       caption,
