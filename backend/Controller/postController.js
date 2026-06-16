@@ -11,10 +11,10 @@ console.log("FILE:", req.file);
   try {
     const { caption, content } = req.body;
 
-    if (!req.file) {
+if (!req.file) {
   return res.status(400).json({
     success: false,
-    message: "Image upload failed",
+    message: "File upload failed (req.file is missing)"
   });
 }
 console.log("UPLOAD FILE:", req.file);

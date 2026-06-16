@@ -205,11 +205,15 @@ const Home = () => {
 
                                     <img
                                         onClick={() => navigate(`/user/${post.user?._id}`)}
-                                        src={
-                                            post.user?.profilepicture
-                                                ? `https://social-nest-1-flyx.onrender.com${post.user.profilepicture}`
-                                                : "https://ui-avatars.com/api/?name=User"
-                                        }
+                                       src={
+  post.user?.profilepicture
+    ? (
+        post.user.profilepicture.startsWith("http")
+          ? post.user.profilepicture
+          : `https://social-nest-1-flyx.onrender.com${post.user.profilepicture}`
+      )
+    : "https://ui-avatars.com/api/?name=User"
+}
                                         alt="Profile"
                                         className="w-8 h-8 rounded-full object-cover border cursor-pointer"
                                         onError={(e) =>
@@ -222,15 +226,14 @@ const Home = () => {
 
                                 <div className="font-bold text-lg text-purple-700 mb-1">{post.caption}</div>
                                 {post.image && (
-                                    // <img
-                                    //     onClick={() => navigate(`/post/${post._id}`)}
-                                    //     src={`https://social-nest-1-flyx.onrender.com${post.image}`}
-                                    //     alt="Post"
-                                    //     className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
-                                    // />
+                                 
                                     <img
                                         onClick={() => navigate(`/post/${post._id}`)}
-                                        src={`https://social-nest-1-flyx.onrender.com${post.image}`}
+                                       src={
+  post.image?.startsWith("http")
+    ? post.image
+    : `https://social-nest-1-flyx.onrender.com${post.image}`
+}
                                         alt="Post"
                                         className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
                                         onError={(e) => (e.target.style.display = "none")}
@@ -279,7 +282,13 @@ const Home = () => {
                                         {post.likedUsers.map(user => (
                                             <div key={user._id} className="flex items-center gap-2 mb-2">
                                                 <img
-                                                    src={`https://social-nest-1-flyx.onrender.com${user.profilepicture}`}
+                                                   src={
+  user?.profilepicture
+    ? user.profilepicture.startsWith("http")
+      ? user.profilepicture
+      : `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
+    : "https://ui-avatars.com/api/?name=User"
+}
                                                     alt={user.username}
                                                     className="w-8 h-8 rounded-full object-cover border"
                                                 />
@@ -321,10 +330,14 @@ const Home = () => {
                                                             <div className="flex gap-2 items-center">
                                                                 <img
                                                                     src={
-                                                                        comment.user?.profilepicture
-                                                                            ? `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
-                                                                            : "https://ui-avatars.com/api/?name=User"
-                                                                    }
+  comment.user?.profilepicture
+    ? (
+        comment.user.profilepicture.startsWith("http")
+          ? comment.user.profilepicture
+          : `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
+      )
+    : "https://ui-avatars.com/api/?name=User"
+}
                                                                     alt="Profile"
                                                                     className="w-8 h-8 rounded-full object-cover border cursor-pointer"
                                                                 />
