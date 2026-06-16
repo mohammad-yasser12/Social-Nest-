@@ -11,12 +11,11 @@ import cloudinary from "../config/cloudinary.js";
 
 
 
-
 export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const profilepicture = req.file?.path; // Cloudinary URL
+    const profilepicture = req.file?.path;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -28,16 +27,26 @@ export const signup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      profilepicture, // store full Cloudinary URL
+      profilepicture,
     });
 
-    res.status(201).json(newUser);
+    // 🔥 CREATE TOKEN (THIS WAS MISSING)
+    const token = jwt.sign(
+      { user_id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      message: "Signup successful",
+      user: newUser,
+      token,
+    });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
-
 
 
 
