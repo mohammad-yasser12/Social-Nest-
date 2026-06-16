@@ -2,50 +2,39 @@ import Post from '../Model/postModel.js';
 import Comment from '../Model/commentModel.js';
 import User from '../Model/userModel.js';
 import mongoose from 'mongoose';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import fs from 'fs';
-import multer from 'multer';
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-});
-
-export const upload = multer({ storage: storage });
+import { fileURLToPath } from "url";
+import cloudinary from "../config/cloudinary.js";
 
 export const createPost = async (req, res) => {
   try {
     const { caption, content } = req.body;
-    const image = req.file?.filename;
 
-    if ( !image) {
-      return res.status(400).json({ success: false, message: ' image is required' });
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image is required",
+      });
     }
-  //  const userId = req.user.user_id;
-
-  //  const userObjectId = new mongoose.Types.ObjectId(userId);
+console.log("UPLOAD FILE:", req.file);
     const newPost = await Post.create({
       caption,
       content,
-      image: `/uploads/${image}`,
+      image: req.file.path, // ✅ Cloudinary URL
       user: req.user.user_id,
     });
 
     res.status(201).json({
       success: true,
-      message: 'Post created successfully',
+      message: "Post created successfully",
       data: newPost,
     });
   } catch (err) {
-    console.error('Create post error:', err);
-    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+    console.error("Create post error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
   }
 };
 
@@ -89,7 +78,6 @@ export const getPostById = async (req, res) => {
   }
 };
 
-
 export const updatePost = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -98,19 +86,12 @@ export const updatePost = async (req, res) => {
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(404).json({ message: "Post not found" });
     }
 
-    // Delete old image if new one is uploaded
+    // If new image uploaded → replace old Cloudinary image
     if (req.file) {
-      if (post.image) {
-        const oldImagePath = path.join('uploads', post.image);
-        fs.unlink(oldImagePath, (err) => {
-          if (err) console.error('Error deleting old image:', err);
-        });
-      }
-      post.image = `/uploads/${req.file.filename}`;
-     
+      post.image = req.file.path; // Cloudinary URL
     }
 
     post.caption = caption;
@@ -119,44 +100,49 @@ export const updatePost = async (req, res) => {
     await post.save();
 
     res.status(200).json({
-      message: 'Post updated successfully',
+      message: "Post updated successfully",
       updatedPost: post,
     });
   } catch (error) {
-    console.error('Error updating post:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error updating post:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
 
 export const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    // Check ownership
-    if (post.user.toString() !== req.user.user_id) {
-      return res.status(403).json({ message: 'Unauthorized to delete this post' });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
     }
 
-    // Delete image from local storage if exists
+    if (post.user.toString() !== req.user.user_id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    // Delete image from Cloudinary
     if (post.image) {
-      const imagePath = path.join(__dirname, '..', 'uploads', path.basename(post.image));
-      fs.unlink(imagePath, (err) => {
-        if (err) {
-          console.error('Error deleting image file:', err.message);
-        } else {
-          console.log('Image deleted:', imagePath);
-        }
-      });
+      const publicId = post.image
+        .split("/")
+        .slice(-1)[0]
+        .split(".")[0];
+
+      await cloudinary.uploader.destroy(`socialnest/${publicId}`);
     }
 
     await post.deleteOne();
-    res.status(200).json({ message: 'Post deleted successfully' });
+
+    res.status(200).json({
+      message: "Post deleted successfully",
+    });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(500).json({
+      message: "Server error",
+      error: err.message,
+    });
   }
 };
 

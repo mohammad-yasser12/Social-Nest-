@@ -17,7 +17,7 @@ const Home = () => {
     const [openLikes, setOpenLikes] = useState({});
     const currentUserId = useSelector(state => state.auth.user?._id);
     console.log("Posts state:", posts);
-console.log("Posts length:", posts.length);
+    console.log("Posts length:", posts.length);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -32,7 +32,7 @@ console.log("Posts length:", posts.length);
         fetchPosts();
     }, []);
 
-   
+
 
     const handleLike = async (postId) => {
         try {
@@ -89,7 +89,7 @@ console.log("Posts length:", posts.length);
             console.error('Error fetching liked users:', err);
         }
     };
-    
+
 
     const handleCommentSubmit = async (postId) => {
         const text = commentTexts[postId];
@@ -163,7 +163,7 @@ console.log("Posts length:", posts.length);
             );
             navigate('/')
             setEditingCommentId(null);
-            
+
         } catch (err) {
             console.error('Error editing comment:', err);
         }
@@ -179,27 +179,42 @@ console.log("Posts length:", posts.length);
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="flex justify-between items-center w-full px-8 py-6 bg-white shadow-md">
-              
-              
-              
+
+
+
             </div>
 
             <div className="w-full max-w-2xl mt-6 px-4">
-                {!Array.isArray(posts) || posts.length === 0 ?  (
+                {!Array.isArray(posts) || posts.length === 0 ? (
                     <p className="text-gray-500 text-center">No posts available</p>
                 ) : (
                     posts.map(post => {
-                      const isLiked = post.likes?.some(
-  (like) => like._id === currentUserId
-);
+                        console.log("Rendering post:", post._id, post.caption);
+                        const isLiked = post.likes?.some(
+                            like => like._id === currentUserId
+                        );
                         return (
                             <div key={post._id} className="bg-white rounded-lg shadow-md p-4 mb-6">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <img
+                                    {/* <img
                                         onClick={() => navigate(`/user/${post.user?._id}`)}
                                         src={`https://social-nest-1-flyx.onrender.com${post.user?.profilepicture}`}
                                         alt="Profile"
                                         className="w-8 h-8 rounded-full object-cover border cursor-pointer"
+                                    /> */}
+
+                                    <img
+                                        onClick={() => navigate(`/user/${post.user?._id}`)}
+                                        src={
+                                            post.user?.profilepicture
+                                                ? `https://social-nest-1-flyx.onrender.com${post.user.profilepicture}`
+                                                : "https://ui-avatars.com/api/?name=User"
+                                        }
+                                        alt="Profile"
+                                        className="w-8 h-8 rounded-full object-cover border cursor-pointer"
+                                        onError={(e) =>
+                                            (e.target.src = "https://ui-avatars.com/api/?name=User")
+                                        }
                                     />
                                     <div className="font-semibold text-gray-800">{post.user?.username}</div>
                                     <div className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</div>
@@ -207,11 +222,18 @@ console.log("Posts length:", posts.length);
 
                                 <div className="font-bold text-lg text-purple-700 mb-1">{post.caption}</div>
                                 {post.image && (
+                                    // <img
+                                    //     onClick={() => navigate(`/post/${post._id}`)}
+                                    //     src={`https://social-nest-1-flyx.onrender.com${post.image}`}
+                                    //     alt="Post"
+                                    //     className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
+                                    // />
                                     <img
                                         onClick={() => navigate(`/post/${post._id}`)}
                                         src={`https://social-nest-1-flyx.onrender.com${post.image}`}
                                         alt="Post"
                                         className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
+                                        onError={(e) => (e.target.style.display = "none")}
                                     />
                                 )}
                                 <div className='flex flex-row justify-between'>
@@ -225,31 +247,31 @@ console.log("Posts length:", posts.length);
 
                                 <div className="flex items-center gap-6 mt-4">
                                     <div className='flex flex-row gap-4'>
-                                    <button
-                                        onClick={() => handleLike(post._id)}
-                                        className={`text-xl ${isLiked ? 'text-blue-500' : 'text-gray-400'}`}
-                                    >
-                                        {isLiked ? '💙' : '🤍'} Like
-                                    </button>
-                                    <h3
-                                        className="text-base text-gray-600 mt-1 cursor-pointer"
-                                        onClick={() => toggleLikesList(post._id)}
-                                    >
-                                        {post.likes?.length || 0} likes
-                                    </h3>
+                                        <button
+                                            onClick={() => handleLike(post._id)}
+                                            className={`text-xl ${isLiked ? 'text-blue-500' : 'text-gray-400'}`}
+                                        >
+                                            {isLiked ? '💙' : '🤍'} Like
+                                        </button>
+                                        <h3
+                                            className="text-base text-gray-600 mt-1 cursor-pointer"
+                                            onClick={() => toggleLikesList(post._id)}
+                                        >
+                                            {post.likes?.length || 0} likes
+                                        </h3>
 
                                     </div>
                                     <div>
-                                    <button
-                                        onClick={() => toggleCommentBox(post._id)}
-                                        className="text-sm text-purple-600 mt-2"
-                                    >
-                                        💬 Comment
-                                    </button>
+                                        <button
+                                            onClick={() => toggleCommentBox(post._id)}
+                                            className="text-sm text-purple-600 mt-2"
+                                        >
+                                            💬 Comment
+                                        </button>
 
                                     </div>
-                                   
-                                    
+
+
                                 </div>
 
                                 {openLikes[post._id] && post.likedUsers && (
@@ -272,40 +294,40 @@ console.log("Posts length:", posts.length);
                                 {openComments[post._id] && (
                                     <div className="mt-4">
                                         <div>
-                                        <div className="mt-2">
-                                            <textarea
-                                                className="w-full p-2 rounded-md border border-gray-300"
-                                                value={commentTexts[post._id] || ''}
-                                                onChange={(e) =>
-                                                    setCommentTexts(prev => ({
-                                                        ...prev,
-                                                        [post._id]: e.target.value,
-                                                    }))
-                                                }
-                                                placeholder="Add a comment..."
-                                            />
-                                            <button
-                                                onClick={() => handleCommentSubmit(post._id)}
-                                                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                                            >
-                                                Post Comment
-                                            </button>
-                                        </div>
+                                            <div className="mt-2">
+                                                <textarea
+                                                    className="w-full p-2 rounded-md border border-gray-300"
+                                                    value={commentTexts[post._id] || ''}
+                                                    onChange={(e) =>
+                                                        setCommentTexts(prev => ({
+                                                            ...prev,
+                                                            [post._id]: e.target.value,
+                                                        }))
+                                                    }
+                                                    placeholder="Add a comment..."
+                                                />
+                                                <button
+                                                    onClick={() => handleCommentSubmit(post._id)}
+                                                    className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                                                >
+                                                    Post Comment
+                                                </button>
+                                            </div>
 
                                             {post.comments?.length > 0 ? (
                                                 post.comments.map(comment => (
                                                     <div key={comment._id} className="bg-gray-100 p-2 rounded-md mb-2 relative">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex gap-2 items-center">
-                                                               <img
-  src={
-    comment.user?.profilepicture
-      ? `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
-      : "https://ui-avatars.com/api/?name=User"
-  }
-  alt="Profile"
-  className="w-8 h-8 rounded-full object-cover border cursor-pointer"
-/>
+                                                                <img
+                                                                    src={
+                                                                        comment.user?.profilepicture
+                                                                            ? `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
+                                                                            : "https://ui-avatars.com/api/?name=User"
+                                                                    }
+                                                                    alt="Profile"
+                                                                    className="w-8 h-8 rounded-full object-cover border cursor-pointer"
+                                                                />
                                                                 <strong>{comment.user?.username || "User"}</strong>
                                                                 <span className="text-xs text-gray-500">
                                                                     {new Date(comment.createdAt).toLocaleString()}
@@ -378,7 +400,7 @@ console.log("Posts length:", posts.length);
                                             )}
                                         </div>
 
-                                        
+
                                     </div>
                                 )}
                             </div>
@@ -393,4 +415,3 @@ console.log("Posts length:", posts.length);
 export default Home;
 
 
-  
