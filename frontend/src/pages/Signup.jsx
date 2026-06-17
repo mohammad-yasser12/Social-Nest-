@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../features/authSlice";
 import Api from '../api/api';
 const Signup = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -46,7 +49,12 @@ localStorage.setItem("token", res.data.token);
 localStorage.setItem("user", JSON.stringify(res.data.user));
 
 alert('Signup successful!');
-
+dispatch(
+  setCredentials({
+    user: res.data.user,
+    token: res.data.token,
+  })
+);
 // go to home
 navigate('/');
     } catch (error) {
