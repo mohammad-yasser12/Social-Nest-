@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { getImageUrl } from "../utils/getImageUrl";
 import Api from '../api/api';
 const Home = () => {
     const navigate = useNavigate();
@@ -32,13 +33,13 @@ const Home = () => {
         fetchPosts();
     }, []);
 
-    const getImageUrl = (img) => {
-        if (!img) return "https://ui-avatars.com/api/?name=User";
+    // const getImageUrl = (img) => {
+    //     if (!img) return "https://ui-avatars.com/api/?name=User";
 
-        if (img.startsWith("http")) return img;
+    //     if (img.startsWith("http")) return img;
 
-        return `https://social-nest-1-flyx.onrender.com${img}`;
-    };
+    //     return `https://social-nest-1-flyx.onrender.com${img}`;
+    // };
 
     const handleLike = async (postId) => {
         try {
@@ -202,23 +203,13 @@ const Home = () => {
                         return (
                             <div key={post._id} className="bg-white rounded-lg shadow-md p-4 mb-6">
                                 <div className="flex items-center gap-3 mb-4">
-                                    {/* <img
-                                        onClick={() => navigate(`/user/${post.user?._id}`)}
-                                        src={`https://social-nest-1-flyx.onrender.com${post.user?.profilepicture}`}
-                                        alt="Profile"
-                                        className="w-8 h-8 rounded-full object-cover border cursor-pointer"
-                                    /> */}
+                                   
 
                                     <img
                                         onClick={() => navigate(`/user/${post.user?._id}`)}
                                         src={
-                                            post.user?.profilepicture
-                                                ? (
-                                                    post.user.profilepicture.startsWith("http")
-                                                        ? post.user.profilepicture
-                                                        : `https://social-nest-1-flyx.onrender.com${post.user.profilepicture}`
-                                                )
-                                                : "https://ui-avatars.com/api/?name=User"
+                                            getImageUrl(post.user?.profilepicture) ||
+                                            "https://ui-avatars.com/api/?name=User"
                                         }
                                         alt="Profile"
                                         className="w-8 h-8 rounded-full object-cover border cursor-pointer"
@@ -235,11 +226,7 @@ const Home = () => {
 
                                     <img
                                         onClick={() => navigate(`/post/${post._id}`)}
-                                        // src={
-                                        //     post.image?.startsWith("http")
-                                        //         ? post.image
-                                        //         : `https://social-nest-1-flyx.onrender.com${post.image}`
-                                        // }
+                                       
                                         src={getImageUrl(post.image)}
                                         alt="Post"
                                         className="w-full h-64 object-cover rounded-md mb-4 cursor-pointer"
@@ -289,14 +276,8 @@ const Home = () => {
                                         {post.likedUsers.map(user => (
                                             <div key={user._id} className="flex items-center gap-2 mb-2">
                                                 <img
-                                                    src={
-                                                        user?.profilepicture
-                                                            ? user.profilepicture.startsWith("http")
-                                                                ? user.profilepicture
-                                                                : `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
-                                                            : "https://ui-avatars.com/api/?name=User"
-                                                    }
-                                                    alt={user.username}
+                                                    src={getImageUrl(user?.profilepicture) || "https://ui-avatars.com/api/?name=User"}
+                                                    alt={user?.username}
                                                     className="w-8 h-8 rounded-full object-cover border"
                                                 />
                                                 <span className="text-gray-700 font-medium">{user.username}</span>
@@ -336,15 +317,7 @@ const Home = () => {
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex gap-2 items-center">
                                                                 <img
-                                                                    src={
-                                                                        comment.user?.profilepicture
-                                                                            ? (
-                                                                                comment.user.profilepicture.startsWith("http")
-                                                                                    ? comment.user.profilepicture
-                                                                                    : `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
-                                                                            )
-                                                                            : "https://ui-avatars.com/api/?name=User"
-                                                                    }
+                                                                    src={getImageUrl(comment.user?.profilepicture) || "https://ui-avatars.com/api/?name=User"}
                                                                     alt="Profile"
                                                                     className="w-8 h-8 rounded-full object-cover border cursor-pointer"
                                                                 />
