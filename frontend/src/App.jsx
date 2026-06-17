@@ -20,12 +20,13 @@ import Inbox from "./pages/Inbox";
 
 
 function App() {
- const token = localStorage.getItem("token");
-const user = JSON.parse(localStorage.getItem("user"));
-const isAuthenticated = !!token;
+ const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = !!user;
+
+
   return (
     <BrowserRouter>
-     {isAuthenticated && <Navbar />}
+    {isAuthenticated && <Navbar />}
       <Routes>
         {/* Redirect based on login status */}
         <Route
