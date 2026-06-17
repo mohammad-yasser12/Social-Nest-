@@ -10,8 +10,7 @@ import messageRouter from "./Router/MessageRouter.js";
 
 
 
-import { fileURLToPath } from 'url';
-import path from 'path';
+
 
 
 // Serve uploads folder
@@ -25,8 +24,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3039;
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 app.use(urlencoded({ extended: true }));
 app.use(
   cors({
@@ -51,7 +49,7 @@ app.use(
 app.use(morgan("tiny"));
 app.options("*", cors());
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 app.use(cookieParser());
