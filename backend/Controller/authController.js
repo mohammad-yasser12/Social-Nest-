@@ -21,15 +21,19 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("STEP 2 OK");
+let profilepicture = "";
 
-    const newUser = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      profilepicture: req.file?.path || "",
-    });
+if (req.file) {
+  const result = await cloudinary.uploader.upload(req.file.path);
+  profilepicture = result.secure_url;
+}
 
+const newUser = await User.create({
+  username,
+  email,
+  password: hashedPassword,
+  profilepicture,
+});
     console.log("STEP 3 OK");
 
     const token = jwt.sign(
