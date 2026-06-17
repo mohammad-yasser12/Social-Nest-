@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "./features/authSlice";
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -20,10 +23,26 @@ import Inbox from "./pages/Inbox";
 
 
 function App() {
- const user = useSelector((state) => state.auth.user);
-  const isAuthenticated = !!user;
+const token = localStorage.getItem("token");
 
 
+const isAuthenticated = !!token;
+
+const dispatch = useDispatch();
+
+useEffect(() => {
+  const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+
+  if (user && token) {
+    dispatch(
+      setCredentials({
+        user: JSON.parse(user),
+        token,
+      })
+    );
+  }
+}, [dispatch]);
   return (
     <BrowserRouter>
     {isAuthenticated && <Navbar />}
