@@ -8,79 +8,45 @@ import cloudinary from "../config/cloudinary.js";
 
 
 
-// export const signup = async (req, res) => {
-//   try {
-//     console.log("🔥 SIGNUP HIT");
-//     console.log("BODY:", req.body);
-//     console.log("FILE:", req.file);
-
-//     const { username, email, password } = req.body;
-
-//     // ✅ VALIDATION (IMPORTANT)
-//     if (!username || !email || !password) {
-//       return res.status(400).json({
-//         message: "All fields are required",
-//       });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     let profilepicture = "";
-
-//     if (req.file) {
-//       const result = await cloudinary.uploader.upload(req.file.path);
-//       profilepicture = result.secure_url;
-//     }
-
-//     const newUser = await User.create({
-//       username,
-//       email,
-//       password: hashedPassword,
-//       profilepicture,
-//     });
-
-//     console.log("USER CREATED:", newUser._id);
-
-//     const token = jwt.sign(
-//       { user_id: newUser._id },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "7d" }
-//     );
-// console.log("JWT_SECRET:", process.env.JWT_SECRET);
-//     return res.status(201).json({
-//       message: "Signup successful",
-//       token,
-//       user: newUser,
-//     });
-
-//   } catch (err) {
-//   console.log("🔥 FULL ERROR:", err);
-//   console.log("STACK:", err.stack);
-
-//   return res.status(500).json({
-//     message: err.message,
-//     stack: err.stack
-//   });
-// }
-// };
 export const signup = async (req, res) => {
   try {
+    console.log("🔥 SIGNUP HIT");
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
     const { username, email, password } = req.body;
 
+    // ✅ VALIDATION (IMPORTANT)
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    let profilepicture = "";
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      profilepicture = result.secure_url;
+    }
 
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
+      profilepicture,
     });
+
+    console.log("USER CREATED:", newUser._id);
 
     const token = jwt.sign(
       { user_id: newUser._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
     return res.status(201).json({
       message: "Signup successful",
       token,
@@ -88,11 +54,15 @@ export const signup = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("SIGNUP ERROR:", err);
-    return res.status(500).json({ message: err.message });
-  }
-};
+  console.log("🔥 FULL ERROR:", err);
+  console.log("STACK:", err.stack);
 
+  return res.status(500).json({
+    message: err.message,
+    stack: err.stack
+  });
+}
+};
 
 export const login = async (req, res) => {
   try {

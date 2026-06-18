@@ -26,15 +26,20 @@ dotenv.config();
 const PORT = process.env.PORT || 3039;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
+import cors from "cors";
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://social-nest-ibd6h7w2a-yasser-social-nest-project07.vercel.app",
+];
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://social-nest-seven.vercel.app",
-      ];
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or Postman)
+      if (!origin) return callback(null, true);
 
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -42,12 +47,15 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
-  
+
+// preflight
+app.options("*", cors());
 
 app.use(morgan("tiny"));
-app.options("*", cors());
+
 
 
 
