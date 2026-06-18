@@ -10,63 +10,48 @@ import cloudinary from "../config/cloudinary.js";
 
 export const signup = async (req, res) => {
   try {
-    console.log("🔥 SIGNUP HIT");
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-
+    console.log("1. Start");
     const { username, email, password } = req.body;
 
-    // ✅ VALIDATION (IMPORTANT)
     if (!username || !email || !password) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
+    console.log("2. Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("3. Password hashed");
 
     let profilepicture = "";
-
     if (req.file) {
+      console.log("4. Uploading to Cloudinary...");
       const result = await cloudinary.uploader.upload(req.file.path);
       profilepicture = result.secure_url;
+      console.log("5. Cloudinary done");
     }
 
+    console.log("6. Creating user...");
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
       profilepicture,
     });
-console.log("BODY:", req.body);
-console.log("USERNAME:", username);
-console.log("EMAIL:", email);
-console.log("PASSWORD:", password);
-    console.log("USER CREATED:", newUser._id);
+    console.log("7. User created");
 
+    console.log("8. Generating JWT...");
     const token = jwt.sign(
       { user_id: newUser._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
-    return res.status(201).json({
-      message: "Signup successful",
-      token,
-      user: newUser,
-    });
+    console.log("9. JWT generated");
 
+    return res.status(201).json({ message: "Signup successful", token, user: newUser });
   } catch (err) {
-  console.log("🔥 FULL ERROR:", err);
-  console.log("🔥 ERROR CODE:", err.code);
-  console.log("🔥 ERROR MESSAGE:", err.message);
-
-
-  return res.status(500).json({
-    message: err.message,
-    stack: err.stack
-  });
-}
+    console.log("🔥 FULL ERROR:", err);
+    console.log("🔥 STACK:", err.stack);
+    return res.status(500).json({ message: err.message, stack: err.stack });
+  }
 };
 
 export const login = async (req, res) => {
