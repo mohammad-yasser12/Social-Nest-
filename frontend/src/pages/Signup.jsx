@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/authSlice";
-import getImageUrl from '../utils/getImageUrl';
+import {getImageUrl} from '../utils/getImageUrl';
 import Api from '../api/api';
 const Signup = () => {
   const dispatch = useDispatch();
