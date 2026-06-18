@@ -23,24 +23,34 @@ import Inbox from "./pages/Inbox";
 
 
 function App() {
-const token = localStorage.getItem("token");
-
-
-const isAuthenticated = !!token;
-
+  
 const dispatch = useDispatch();
+const user = useSelector((state) => state.auth.user);
+const isAuthenticated = !!user;
+
 
 useEffect(() => {
-  const user = localStorage.getItem("user");
+  const storedUser = localStorage.getItem("user");
   const token = localStorage.getItem("token");
 
-  if (user && token) {
-    dispatch(
-      setCredentials({
-        user: JSON.parse(user),
-        token,
-      })
-    );
+  try {
+    if (
+      storedUser &&
+      storedUser !== "undefined" &&
+      token
+    ) {
+      dispatch(
+        setCredentials({
+          user: JSON.parse(storedUser),
+          token,
+        })
+      );
+    }
+  } catch (err) {
+    console.error("Invalid user data in localStorage:", err);
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   }
 }, [dispatch]);
   return (
