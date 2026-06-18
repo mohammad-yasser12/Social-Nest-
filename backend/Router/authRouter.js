@@ -13,7 +13,8 @@ import {authMiddleware} from '../middleware/authMiddleware.js';
 const authRouter = express.Router();
 
 
- authRouter.post('/signup', upload.single('profilepicture'), signup);
+//  authRouter.post('/signup', upload.single('profilepicture'), signup);
+authRouter.post("/signup", signup);
  authRouter.post('/login', login);
  
  authRouter.get('/users', authMiddleware, getAllUsers);
