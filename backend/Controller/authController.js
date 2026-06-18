@@ -58,7 +58,9 @@ console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
   } catch (err) {
   console.log("🔥 FULL ERROR:", err);
-  console.log("STACK:", err.stack);
+  console.log("🔥 ERROR CODE:", err.code);
+  console.log("🔥 ERROR MESSAGE:", err.message);
+
 
   return res.status(500).json({
     message: err.message,
