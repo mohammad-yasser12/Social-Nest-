@@ -32,7 +32,6 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://social-nest-1t3tqwpod-yasser-social-nest-project07.vercel.app",
-  "https://social-nest-1-flyx.onrender.com"
 ];
 
 app.use(cors({
