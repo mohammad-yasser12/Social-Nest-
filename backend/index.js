@@ -31,20 +31,35 @@ app.use((req, res, next) => {
   console.log("🔥 REQUEST HIT:", req.method, req.url);
   next();
 });
-
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://social-nest-1t3tqwpod-yasser-social-nest-project07.vercel.app",
+ 
+  // Your production URLs
+  "https://social-nest-git-cloudinary-74ffaf-yasser-social-nest-project07.vercel.app",
+  "https://social-nest-e4h1skoei-yasser-social-nest-project07.vercel.app",
+  // Allow any vercel.app subdomain (this covers all future deployments)
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(null, false);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
     }
+    
+    // Check if origin is exactly allowed
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Check if it's a vercel.app domain (any subdomain)
+    if (origin.match(/^https:\/\/.*\.vercel\.app$/)) {
+      return callback(null, true);
+    }
+    
+    // If not allowed
+    console.log("Blocked by CORS:", origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -62,7 +77,7 @@ app.use(morgan("tiny"));
 
 
 app.use(cookieParser());
-app.use(express.json());
+
 
 
 app.use('/api/auth', authRouter);
