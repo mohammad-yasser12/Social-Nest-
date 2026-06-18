@@ -8,7 +8,6 @@ import cloudinary from "../config/cloudinary.js";
 
 
 
-
 export const signup = async (req, res) => {
   try {
     console.log("🔥 SIGNUP HIT");
@@ -17,24 +16,30 @@ export const signup = async (req, res) => {
 
     const { username, email, password } = req.body;
 
-    console.log("STEP 1 OK");
+    // ✅ VALIDATION (IMPORTANT)
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-let profilepicture = "";
+    let profilepicture = "";
 
-if (req.file) {
-  const result = await cloudinary.uploader.upload(req.file.path);
-  profilepicture = result.secure_url;
-}
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      profilepicture = result.secure_url;
+    }
 
-const newUser = await User.create({
-  username,
-  email,
-  password: hashedPassword,
-  profilepicture,
-});
-    console.log("STEP 3 OK");
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      profilepicture,
+    });
+
+    console.log("USER CREATED:", newUser._id);
 
     const token = jwt.sign(
       { user_id: newUser._id },
@@ -42,18 +47,18 @@ const newUser = await User.create({
       { expiresIn: "7d" }
     );
 
-    console.log("STEP 4 OK");
-
     return res.status(201).json({
       message: "Signup successful",
-        token,
+      token,
       user: newUser,
-    
     });
 
   } catch (err) {
     console.error("🔥 SIGNUP ERROR:", err);
-    return res.status(500).json({ message: err.message });
+
+    return res.status(500).json({
+      message: err.message || "Server error",
+    });
   }
 };
 
