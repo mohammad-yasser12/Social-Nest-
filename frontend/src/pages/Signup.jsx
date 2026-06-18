@@ -38,9 +38,7 @@ const Signup = () => {
       }
 
   const res = await Api.post('/auth/signup', data, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
+ 
 });
 
 // 🔥 SAVE TOKEN

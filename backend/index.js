@@ -20,12 +20,12 @@ import messageRouter from "./Router/MessageRouter.js";
 
 
 
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3039;
 const app = express();
-
-app.use(urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: (origin, callback) => {
