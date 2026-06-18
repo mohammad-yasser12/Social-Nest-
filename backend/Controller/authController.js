@@ -46,7 +46,7 @@ export const signup = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
     return res.status(201).json({
       message: "Signup successful",
       token,
@@ -54,12 +54,14 @@ export const signup = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("🔥 SIGNUP ERROR:", err);
+  console.log("🔥 FULL ERROR:", err);
+  console.log("STACK:", err.stack);
 
-    return res.status(500).json({
-      message: err.message || "Server error",
-    });
-  }
+  return res.status(500).json({
+    message: err.message,
+    stack: err.stack
+  });
+}
 };
 
 export const login = async (req, res) => {
