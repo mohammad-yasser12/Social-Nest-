@@ -10,11 +10,11 @@ import messageRouter from "./Router/MessageRouter.js";
 
 
 
-import { fileURLToPath } from 'url';
-import path from 'path';
+
 
 
 // Serve uploads folder
+
 
 
 
@@ -25,29 +25,48 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3039;
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://social-nest-seven.vercel.app",
-    ],
-    credentials: true,
-  })
-);
-  
+
+
+app.use((req, res, next) => {
+  console.log("🔥 REQUEST HIT:", req.method, req.url);
+  next();
+});
+const allowedOrigins = [
+   "http://localhost:5173",
+  "https://social-nest-e4h1skoei-yasser-social-nest-project07.vercel.app",
+  // Allow any vercel.app subdomain (this covers all future deployments)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and all vercel.app domains
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin) ||
+        /^https:\/\/.*\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+    
+    console.log("Blocked by CORS:", origin);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 app.use(morgan("tiny"));
 
-// app.use(express.static("public"));
-// app.use("/uploads", express.static("uploads"));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 
 app.use(cookieParser());
-app.use(express.json());
+
 
 
 app.use('/api/auth', authRouter);

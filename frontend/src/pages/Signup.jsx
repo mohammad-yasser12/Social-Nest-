@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../features/authSlice";
+import {getImageUrl} from '../utils/getImageUrl';
 import Api from '../api/api';
 const Signup = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -33,14 +37,27 @@ const Signup = () => {
         data.append('profilepicture', profilepicture);
       }
 
-      const res = await Api.post('/auth/signup', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+  const res = await Api.post('/auth/signup', data, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 
-      alert('Signup successful! Please login now.');
-      navigate('/login');
+// 🔥 SAVE TOKEN
+localStorage.setItem("token", res.data.token);
+
+// (optional) save user
+localStorage.setItem("user", JSON.stringify(res.data.user));
+
+alert('Signup successful!');
+dispatch(
+  setCredentials({
+    user: res.data.user,
+    token: res.data.token,
+  })
+);
+// go to home
+navigate('/');
     } catch (error) {
       alert(error.response?.data?.message || 'Signup failed');
       console.error('Signup error:', error);

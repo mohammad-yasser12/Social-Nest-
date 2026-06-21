@@ -56,7 +56,9 @@ console.log("token",token);
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+console.log("AUTH HEADER:", authHeader);
+console.log("TOKEN:", token);
+console.log("JWT SECRET:", process.env.JWT_SECRET);
     // Attach user info
     req.user = { user_id: decoded.user_id };
 

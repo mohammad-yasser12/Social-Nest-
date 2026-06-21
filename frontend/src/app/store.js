@@ -6,11 +6,3 @@ export const store = configureStore({
     auth: authReducer,
   },
 });
-
-// const token = jwt.sign(
-//   { user_id: user._id },
-//   process.env.JWT_SECRET,
-//   { expiresIn: '7d' },
-//   console.log(token)
-  
-// );

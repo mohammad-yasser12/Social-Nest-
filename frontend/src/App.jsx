@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "./features/authSlice";
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -20,20 +23,47 @@ import Inbox from "./pages/Inbox";
 
 
 function App() {
-  const token = localStorage.getItem("token");
-  const isAuthenticated = token && token !== "undefined" && token !== "null";
+  
+const dispatch = useDispatch();
+const user = useSelector((state) => state.auth.user);
+const isAuthenticated = !!user;
 
+
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+
+  try {
+    if (
+      storedUser &&
+      storedUser !== "undefined" &&
+      token
+    ) {
+      dispatch(
+        setCredentials({
+          user: JSON.parse(storedUser),
+          token,
+        })
+      );
+    }
+  } catch (err) {
+    console.error("Invalid user data in localStorage:", err);
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  }
+}, [dispatch]);
   return (
     <BrowserRouter>
-      <Navbar />
+    {isAuthenticated && <Navbar />}
       <Routes>
         {/* Redirect based on login status */}
         <Route
-          path="/"
-          element={ <Home /> 
-          }
-        />
-
+  path="/"
+  element={
+    isAuthenticated ? <Home /> : <Navigate to="/signup" replace />
+  }
+/>
         {/* Public Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
