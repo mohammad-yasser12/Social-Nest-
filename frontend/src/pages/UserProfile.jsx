@@ -256,7 +256,7 @@ const UserProfile = () => {
       : `https://social-nest-1-flyx.onrender.com${post.image}`
   }
   alt="Post"
-  className="w-full h-auto rounded"
+  className="w-full max-w-md mx-auto h-auto rounded"
 />
 
                             <div className='flex flex-row justify-start gap-4'>

@@ -154,14 +154,16 @@ const handleMessages = async (receiverId, username, profilepicture) => {
           >
             {/* 👤 USER INFO */}
             <div className="flex items-center gap-3">
-            <img
+          <img
   src={
-    user?.profilepicture
-      ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
-      : "/default.png"
+    user?.profilepicture?.startsWith("http")
+      ? user.profilepicture
+      : user?.profilepicture
+        ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
+        : "/default.png"
   }
   alt="profile"
-  className="w-10 h-10 rounded-full object-cover"
+  className="w-14 h-14 rounded-full object-cover border"
   onError={(e) => (e.target.src = "/default.png")}
 />
               <p className="font-medium">{user.username}</p>
