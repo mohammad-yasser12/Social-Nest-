@@ -37,7 +37,9 @@ console.log("Posts length:", posts.length);
     const handleLike = async (postId) => {
         try {
             const post = posts.find(p => p._id === postId);
-            const isLiked = post.likes?.includes(currentUserId);
+const isLiked = post.likes?.some(
+    like => (like._id || like).toString() === currentUserId
+);
             const updatedLikes = isLiked
                 ? post.likes.filter(id => id !== currentUserId)
                 : [...post.likes, currentUserId];
@@ -57,6 +59,9 @@ console.log("Posts length:", posts.length);
             console.error('Like error:', err);
         }
     };
+    useEffect(() => {
+handleLike();
+    }, [posts]);
 
     const toggleCommentBox = (postId) => {
         setOpenComments(prev => ({

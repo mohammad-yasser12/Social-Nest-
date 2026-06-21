@@ -162,7 +162,7 @@ const UserProfile = () => {
 
             <div className="flex flex-col items-center mb-6 relative">
                 <img
-                    src={user.profilepicture ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}` : '/default-profile.jpg'}
+                    src={user.profilepicture ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}` : "https://ui-avatars.com/api/?name=User"}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover border mb-2"
                 />
