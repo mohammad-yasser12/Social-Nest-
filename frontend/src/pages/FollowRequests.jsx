@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Api from "../api/api";
+import {getImageUrl} from '../utils/getImageUrl';
 const FollowRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,15 +87,11 @@ const FollowRequests = () => {
             >
               {/* USER */}
               <div className="flex items-center gap-3">
-                <img
-                  src={
-                    user.sender?.profilepicture
-                      ? `https://social-nest-1-flyx.onrender.com${user.sender.profilepicture}`
-                      : "/default.png"
-                  }
-                  alt="profile"
-                  className="w-12 h-12 rounded-full object-cover"
-                />
+               <img
+  src={getImageUrl(user.sender?.profilepicture)}
+  alt="profile"
+  className="w-12 h-12 rounded-full object-cover"
+/>
                 <p className="font-medium">{user.sender.username}</p>
               </div>
 
