@@ -249,11 +249,15 @@ const UserProfile = () => {
                                     </div>
                                 )}
                             </div>
-                            <img
-                                src={post.image ? `https://social-nest-1-flyx.onrender.com${post.image}` : '/default-post.jpg'}
-                                alt="Post"
-                                className="w-full h-auto rounded"
-                            />
+                           <img
+  src={
+    post.image?.startsWith("http")
+      ? post.image
+      : `https://social-nest-1-flyx.onrender.com${post.image}`
+  }
+  alt="Post"
+  className="w-full h-auto rounded"
+/>
 
                             <div className='flex flex-row justify-start gap-4'>
                                
