@@ -39,11 +39,9 @@ const Inbox = () => {
       {conversations.map((conv) => {
         console.log("Conversation ID:", conv._id);
 
-const otherUsers = (conv.participants || []).filter(
-  (p) => String(p?._id || p) !== String(user._id)
+const otherUser = conv.participants?.find(
+  (p) => p._id?.toString() !== user._id?.toString()
 );
-
-const otherUser = otherUsers[0];
         return (
           <div
             key={conv._id}
