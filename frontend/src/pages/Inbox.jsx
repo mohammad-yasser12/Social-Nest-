@@ -57,11 +57,13 @@ const Inbox = () => {
 }
             className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
           >
-           <img
+       <img
   src={
-    otherUser?.profilepicture
-      ? `https://social-nest-1-flyx.onrender.com${otherUser.profilepicture}`
-      : "https://via.placeholder.com/40"
+    otherUser?.profilepicture?.startsWith("http")
+      ? otherUser.profilepicture
+      : otherUser?.profilepicture
+        ? `https://social-nest-1-flyx.onrender.com${otherUser.profilepicture}`
+        : "https://via.placeholder.com/40"
   }
   alt="profile"
   className="w-10 h-10 rounded-full object-cover"
