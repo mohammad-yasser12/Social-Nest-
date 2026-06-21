@@ -48,20 +48,20 @@ const Inbox = () => {
            onClick={() =>
   navigate(`/messages/${conv._id}`, {
     state: {
-      receiverId: otherUser?._id,
-      username: otherUser?.username,
-      profilepicture: otherUser?.profilepicture,
+      receiverId: otherUsers?.[0]?._id,
+      username: otherUsers?.[0]?.username,
+      profilepicture: otherUsers?.[0]?.profilepicture,
     },
   })
 }
             className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
           >
-       <img
+     <img
   src={
-    otherUser?.profilepicture?.startsWith("http")
-      ? otherUser.profilepicture
-      : otherUser?.profilepicture
-        ? `https://social-nest-1-flyx.onrender.com${otherUser.profilepicture}`
+    otherUsers?.[0]?.profilepicture?.startsWith("http")
+      ? otherUsers[0].profilepicture
+      : otherUsers?.[0]?.profilepicture
+        ? `https://social-nest-1-flyx.onrender.com${otherUsers[0].profilepicture}`
         : "https://via.placeholder.com/40"
   }
   alt="profile"
@@ -70,7 +70,7 @@ const Inbox = () => {
 
             <div>
               <p className="font-semibold">
-                {otherUser?.username || "Unknown"}
+               {otherUsers?.[0]?.username || "Unknown"}
               </p>
               <p className="text-sm text-gray-500">
                 Open chat
