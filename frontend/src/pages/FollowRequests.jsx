@@ -19,7 +19,7 @@ const FollowRequests = () => {
       );
 
       setRequests(res.data.data);
-      console.log("ansee",res.data.data);
+      console.log("ansee",res.data.data||[]);
       
     } catch (err) {
       console.log(err);
