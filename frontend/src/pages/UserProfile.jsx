@@ -166,10 +166,6 @@ const UserProfile = () => {
   alt="Profile"
   className="w-24 h-24 rounded-full object-cover border mb-2"
 />
-                    src={user.profilepicture ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}` : "https://ui-avatars.com/api/?name=User"}
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover border mb-2"
-                />
                 {isOwner && (
                     <div className="absolute top-2 right-2" ref={profileDropdownRef}>
                         <button
