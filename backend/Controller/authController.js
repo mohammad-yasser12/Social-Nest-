@@ -46,7 +46,7 @@ export const signup = async (req, res) => {
     );
     console.log("9. JWT generated");
 
-    return res.status(201).json({ message: "Signup successful", token, user: newUser });
+    return res.status(201).json({ message: "Signup successfully", token, user: newUser });
   } catch (err) {
     console.log("🔥 FULL ERROR:", err);
     console.log("🔥 STACK:", err.stack);

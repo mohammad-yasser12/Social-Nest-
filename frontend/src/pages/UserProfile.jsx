@@ -162,10 +162,10 @@ const UserProfile = () => {
 
             <div className="flex flex-col items-center mb-6 relative">
                 <img
-                    src={user.profilepicture ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}` : '/default-profile.jpg'}
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover border mb-2"
-                />
+  src={user.profilepicture || "/default-profile.jpg"}
+  alt="Profile"
+  className="w-24 h-24 rounded-full object-cover border mb-2"
+/>
                 {isOwner && (
                     <div className="absolute top-2 right-2" ref={profileDropdownRef}>
                         <button
