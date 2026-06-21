@@ -9,18 +9,6 @@ import postRouter from './Router/postRouter.js';
 import messageRouter from "./Router/MessageRouter.js";
 
 
-
-
-
-
-// Serve uploads folder
-
-
-
-
-
-
-
 dotenv.config();
 
 const PORT = process.env.PORT || 3039;
@@ -34,14 +22,14 @@ app.use((req, res, next) => {
 const allowedOrigins = [
    "http://localhost:5173",
   "https://social-nest-e4h1skoei-yasser-social-nest-project07.vercel.app",
-  // Allow any vercel.app subdomain (this covers all future deployments)
+
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     
-    // Allow localhost and all vercel.app domains
+
     if (/^https?:\/\/localhost(:\d+)?$/.test(origin) ||
         /^https:\/\/.*\.vercel\.app$/.test(origin)) {
       return callback(null, true);
