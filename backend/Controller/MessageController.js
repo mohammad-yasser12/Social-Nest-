@@ -5,25 +5,26 @@ export const createOrGetConversation = async (req, res) => {
     const { receiverId } = req.body;
     const senderId = req.user.user_id;
 
-const participants = [senderId, receiverId].sort();
+    const participants = [senderId, receiverId]
+      .map(id => id.toString())
+      .sort();
 
-let conversation = await Conversation.findOne({
-  participants: { $all: participants },
-});
+    const uniqueKey = participants.join("_");
 
-if (!conversation) {
-  conversation = await Conversation.create({
-    participants,
-  });
-}
+    let conversation = await Conversation.findOne({ uniqueKey });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants,
+        uniqueKey,
+      });
+    }
 
     res.status(200).json({ success: true, conversation });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
-
 
 export const sendMessage = async (req, res) => {
   try {
