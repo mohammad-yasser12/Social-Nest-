@@ -39,18 +39,20 @@ const Inbox = () => {
       {conversations.map((conv) => {
         console.log("Conversation ID:", conv._id);
 
-      const otherUsers = conv.participants?.filter(
-  (p) => p._id !== user._id
+const otherUsers = (conv.participants || []).filter(
+  (p) => String(p?._id || p) !== String(user._id)
 );
+
+const otherUser = otherUsers[0];
         return (
           <div
             key={conv._id}
            onClick={() =>
   navigate(`/messages/${conv._id}`, {
     state: {
-      receiverId: otherUsers?.[0]?._id,
-      username: otherUsers?.[0]?.username,
-      profilepicture: otherUsers?.[0]?.profilepicture,
+      receiverId: otherUser?._id,
+      username: otherUser?.username,
+      profilepicture: otherUser?.profilepicture,
     },
   })
 }
@@ -58,10 +60,10 @@ const Inbox = () => {
           >
      <img
   src={
-    otherUsers?.[0]?.profilepicture?.startsWith("http")
-      ? otherUsers[0].profilepicture
-      : otherUsers?.[0]?.profilepicture
-        ? `https://social-nest-1-flyx.onrender.com${otherUsers[0].profilepicture}`
+    otherUser?.profilepicture?.startsWith("http")
+      ? otherUser.profilepicture
+      : otherUser?.profilepicture
+        ? `https://social-nest-1-flyx.onrender.com${otherUser.profilepicture}`
         : "https://via.placeholder.com/40"
   }
   alt="profile"
@@ -70,7 +72,7 @@ const Inbox = () => {
 
             <div>
               <p className="font-semibold">
-               {otherUsers?.[0]?.username || "Unknown"}
+               {otherUser?.username || "Unknown"}
               </p>
               <p className="text-sm text-gray-500">
                 Open chat
