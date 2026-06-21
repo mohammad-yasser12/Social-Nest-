@@ -5,15 +5,17 @@ export const createOrGetConversation = async (req, res) => {
     const { receiverId } = req.body;
     const senderId = req.user.user_id;
 
-    let conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
-    });
+const participants = [senderId, receiverId].sort();
 
-    if (!conversation) {
-      conversation = await Conversation.create({
-        participants: [senderId, receiverId],
-      });
-    }
+let conversation = await Conversation.findOne({
+  participants: { $all: participants },
+});
+
+if (!conversation) {
+  conversation = await Conversation.create({
+    participants,
+  });
+}
 
     res.status(200).json({ success: true, conversation });
   } catch (err) {
