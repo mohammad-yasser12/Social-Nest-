@@ -106,7 +106,7 @@ export const deleteForEveryone = async (req, res) => {
     const message = await Message.findById(messageId);
 
     if (!message) {
-      return res.status(404).json({ message: "Message not found" });
+      return res.status(404).json({ message: "Message Not Found" });
     }
 
     // 🔥 Only sender allowed
