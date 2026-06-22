@@ -250,35 +250,7 @@ const Home = () => {
                                         </span>
                                     </div>
                                 </div>
-{/* 
-                                <div className="flex items-center gap-6 mt-4">
-                                    <div className='flex flex-row gap-4'>
-                                        <button
-                                            onClick={() => handleLike(post._id)}
-                                            className={`text-xl ${isLiked ? 'text-blue-500' : 'text-gray-400'}`}
-                                        >
-                                            {isLiked ? '💙' : '🤍'} Like
-                                        </button>
-                                        <h3
-                                            className="text-base text-gray-600 mt-1 cursor-pointer"
-                                            onClick={() => toggleLikesList(post._id)}
-                                        >
-                                            {post.likes?.length || 0} likes
-                                        </h3>
 
-                                    </div>
-                                    <div>
-                                        <button
-                                            onClick={() => toggleCommentBox(post._id)}
-                                            className="text-sm text-purple-600 mt-2"
-                                        >
-                                            💬 Comment
-                                        </button>
-
-                                    </div>
-
-
-                                </div> */}
 <div className="flex items-center justify-between mt-3">
   <LikeComponent post={post} />
   <CommentComponent postId={post._id} />
