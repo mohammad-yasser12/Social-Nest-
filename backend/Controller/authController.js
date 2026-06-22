@@ -213,6 +213,8 @@ export const getUserWithPosts = async (req, res) => {
 };
 
 // POST /api/auth/follow/:id
+
+
 export const followUser = async (req, res) => {
   try {
     const senderId = req.user.user_id;
@@ -235,6 +237,17 @@ export const followUser = async (req, res) => {
       sender: senderId,
       receiver: receiverId,
       status: "pending",
+    });
+
+    // 🔥 GET sender info for message
+    const senderUser = await User.findById(senderId);
+
+    // 🔥 CREATE NOTIFICATION for receiver
+    await Notification.create({
+      user: receiverId, // receiver gets notification
+      sender: senderId,
+      type: "follow_request",
+      message: `${senderUser.username} sent you a follow request 👤`,
     });
 
     res.json({
@@ -346,6 +359,7 @@ export const getFollowers = async (req, res) => {
 
 // ================= ACCEPT REQUEST =================
 // POST /api/auth/accept/:requestId
+
 export const acceptFollowRequest = async (req, res) => {
   try {
     const requestId = req.params.id;
@@ -359,12 +373,24 @@ export const acceptFollowRequest = async (req, res) => {
     request.status = "accepted";
     await request.save();
 
+    // update users
     await User.findByIdAndUpdate(request.sender, {
       $addToSet: { following: request.receiver },
     });
 
     await User.findByIdAndUpdate(request.receiver, {
       $addToSet: { followers: request.sender },
+    });
+
+    // 🔥 GET USER INFO (for message)
+    const receiverUser = await User.findById(request.receiver);
+
+    // 🔥 CREATE NOTIFICATION
+    await Notification.create({
+      user: request.sender, // sender gets notification
+      sender: request.receiver,
+      type: "follow_accept",
+      message: `${receiverUser.username} accepted your follow request ✅`,
     });
 
     res.json({
@@ -378,6 +404,8 @@ export const acceptFollowRequest = async (req, res) => {
 };
 // ================= REJECT REQUEST =================
 // POST /api/auth/reject/:requestId
+
+
 export const rejectFollowRequest = async (req, res) => {
   try {
     const requestId = req.params.id;
@@ -390,6 +418,17 @@ export const rejectFollowRequest = async (req, res) => {
 
     request.status = "rejected";
     await request.save();
+
+    // 🔥 get receiver info (who rejected)
+    const receiverUser = await User.findById(request.receiver);
+
+    // 🔥 notify sender
+    await Notification.create({
+      user: request.sender, // sender gets notification
+      sender: request.receiver,
+      type: "follow_reject",
+      message: `${receiverUser.username} rejected your follow request ❌`,
+    });
 
     res.json({
       success: true,

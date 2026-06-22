@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { getImageUrl } from "../utils/getImageUrl";
+import LikeComponent from "../components/LikeComponent";
+import CommentComponent from "../components/CommentComponent";
 import Api from '../api/api';
 const Home = () => {
     const navigate = useNavigate();
@@ -33,37 +35,41 @@ const Home = () => {
         fetchPosts();
     }, []);
 
-    // const getImageUrl = (img) => {
-    //     if (!img) return "https://ui-avatars.com/api/?name=User";
+   
+ const handleLike = async (postId) => {
+  try {
+    const post = posts.find((p) => p._id === postId);
 
-    //     if (img.startsWith("http")) return img;
+    const isLiked = post.likes?.some(
+      (like) => (like._id || like).toString() === currentUserId
+    );
 
-    //     return `https://social-nest-1-flyx.onrender.com${img}`;
-    // };
+    const updatedLikes = isLiked
+      ? post.likes.filter(
+          (like) => (like._id || like).toString() !== currentUserId
+        )
+      : [...(post.likes || []), currentUserId];
 
-    const handleLike = async (postId) => {
-        try {
-            const post = posts.find(p => p._id === postId);
-            const isLiked = post.likes?.includes(currentUserId);
-            const updatedLikes = isLiked
-                ? post.likes.filter(id => id !== currentUserId)
-                : [...post.likes, currentUserId];
+    setPosts((prev) =>
+      prev.map((p) =>
+        p._id === postId ? { ...p, likes: updatedLikes } : p
+      )
+    );
 
-            await Api.put(
-                `/posts/like/${postId}`,
-                { likes: updatedLikes },
-                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-            );
+    await Api.put(
+      `/posts/like/${postId}`,
+      { likes: updatedLikes },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Like error:", err);
+  }
+};
 
-            setPosts(prev =>
-                prev.map(p =>
-                    p._id === postId ? { ...p, likes: updatedLikes } : p
-                )
-            );
-        } catch (err) {
-            console.error('Like error:', err);
-        }
-    };
 
     const toggleCommentBox = (postId) => {
         setOpenComments(prev => ({
@@ -196,12 +202,15 @@ const Home = () => {
                     <p className="text-gray-500 text-center">No posts available</p>
                 ) : (
                     posts.map(post => {
-                        console.log("Rendering post:", post._id, post.caption);
+                      
                         const isLiked = post.likes?.some(
                             like => like._id === currentUserId
                         );
                         return (
                             <div key={post._id} className="bg-white rounded-lg shadow-md p-4 mb-6">
+{
+                                console.log("Post user111:", post._id)}
+
                                 <div className="flex items-center gap-3 mb-4">
                                    
 
@@ -242,34 +251,10 @@ const Home = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-6 mt-4">
-                                    <div className='flex flex-row gap-4'>
-                                        <button
-                                            onClick={() => handleLike(post._id)}
-                                            className={`text-xl ${isLiked ? 'text-blue-500' : 'text-gray-400'}`}
-                                        >
-                                            {isLiked ? '💙' : '🤍'} Like
-                                        </button>
-                                        <h3
-                                            className="text-base text-gray-600 mt-1 cursor-pointer"
-                                            onClick={() => toggleLikesList(post._id)}
-                                        >
-                                            {post.likes?.length || 0} likes
-                                        </h3>
-
-                                    </div>
-                                    <div>
-                                        <button
-                                            onClick={() => toggleCommentBox(post._id)}
-                                            className="text-sm text-purple-600 mt-2"
-                                        >
-                                            💬 Comment
-                                        </button>
-
-                                    </div>
-
-
-                                </div>
+<div className="flex items-center justify-between mt-3">
+  <LikeComponent post={post} />
+  <CommentComponent postId={post._id} />
+</div>
 
                                 {openLikes[post._id] && post.likedUsers && (
                                     <div className="mt-2 bg-gray-100 p-2 rounded-md">

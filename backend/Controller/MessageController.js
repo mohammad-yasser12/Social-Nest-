@@ -1,17 +1,24 @@
 import Conversation from "../Model/Conversation.js";
 import Message from "../Model/Message.js";
+import User from "../Model/userModel.js";
+import Notification from "../Model/notificationModel.js";
 export const createOrGetConversation = async (req, res) => {
   try {
     const { receiverId } = req.body;
     const senderId = req.user.user_id;
 
-    let conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
-    });
+    const participants = [senderId, receiverId]
+      .map(id => id.toString())
+      .sort();
+
+    const uniqueKey = participants.join("_");
+
+    let conversation = await Conversation.findOne({ uniqueKey });
 
     if (!conversation) {
       conversation = await Conversation.create({
-        participants: [senderId, receiverId],
+        participants,
+        uniqueKey,
       });
     }
 
@@ -20,8 +27,6 @@ export const createOrGetConversation = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-
 
 export const sendMessage = async (req, res) => {
   try {

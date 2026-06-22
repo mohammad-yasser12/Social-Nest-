@@ -78,11 +78,17 @@ const LikeComponent = ({ post }) => {
                     {likedUsers.length > 0 ? (
                         likedUsers.map(user => (
                             <div key={user._id} className="flex items-center gap-2 mb-2">
-                                <img
-                                    src={`https://social-nest-1-flyx.onrender.com${user.profilepicture}`}
-                                    alt={user.username}
-                                    className="w-8 h-8 rounded-full object-cover border"
-                                />
+                              <img
+  src={
+    user.profilepicture?.startsWith("http")
+      ? user.profilepicture
+      : user.profilepicture
+      ? `https://social-nest-1-flyx.onrender.com${user.profilepicture}`
+      : "https://via.placeholder.com/40"
+  }
+  alt={user.username}
+  className="w-8 h-8 rounded-full object-cover border"
+/>
                                 <span className="text-gray-700 font-medium">{user.username}</span>
                             </div>
                         ))

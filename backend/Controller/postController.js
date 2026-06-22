@@ -1,6 +1,7 @@
 import Post from '../Model/postModel.js';
 import Comment from '../Model/commentModel.js';
 import User from '../Model/userModel.js';
+import Notification from '../Model/notificationModel.js';
 import mongoose from 'mongoose';
 import { fileURLToPath } from "url";
 import cloudinary from "../config/cloudinary.js";
@@ -150,31 +151,56 @@ export const deletePost = async (req, res) => {
 
 
 
+
+
 export const likePost = async (req, res) => {
   const postId = req.params.id;
-  const userId = req.user.user_id; // from JWT middleware
+  const userId = req.user.user_id;
 
   try {
-      const post = await Post.findById(postId);
+    const post = await Post.findById(postId);
 
-      if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (!post)
+      return res.status(404).json({ message: "Post not found" });
 
-      const alreadyLiked = post.likes.includes(userId);
+    const alreadyLiked = post.likes.includes(userId);
 
-      if (alreadyLiked) {
-          // Remove like
-          post.likes = post.likes.filter(id => id.toString() !== userId);
-      } else {
-          // Add like
-          post.likes.push(userId);
+    if (alreadyLiked) {
+      // Remove like
+      post.likes = post.likes.filter(
+        (id) => id.toString() !== userId
+      );
+    } else {
+      // Add like
+      post.likes.push(userId);
+
+      // ✅ Don't notify yourself
+      if (post.user.toString() !== userId) {
+        const currentUser = await User.findById(userId);
+
+        await Notification.create({
+          user: post.user, // receiver
+          message: `${currentUser.username} liked your post ❤️`,
+          type: "like",
+        });
       }
+    }
 
-      await post.save();
-      res.status(200).json({ message: alreadyLiked ? 'Unliked' : 'Liked', likes: post.likes.length });
+    await post.save();
+
+    res.status(200).json({
+      message: alreadyLiked ? "Unliked" : "Liked",
+      likes: post.likes.length,
+    });
   } catch (err) {
-      res.status(500).json({ message: 'Error liking post', error: err.message });
+    res.status(500).json({
+      message: "Error liking post",
+      error: err.message,
+    });
   }
 };
+
+
 
 export const addComment = async (req, res) => {
   try {
@@ -182,7 +208,6 @@ export const addComment = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.user_id;
 
-    // 1. Create and save the comment
     const newComment = new Comment({
       text,
       user: userId,
@@ -191,21 +216,44 @@ export const addComment = async (req, res) => {
 
     await newComment.save();
 
-    // 2. Push the comment into Post.comments array
     await Post.findByIdAndUpdate(postId, {
       $push: { comments: newComment._id },
     });
 
-    // 3. Populate the comment's user before sending it to frontend
-    const populatedComment = await Comment.findById(newComment._id).populate(
-      'user',
-      'username profilepicture email'
-    );
+    const populatedComment = await Comment.findById(newComment._id)
+      .populate("user", "username profilepicture email");
 
+    // 🔥 CREATE NOTIFICATION (THIS WAS MISSING)
+const post = await Post.findById(postId);
+
+if (post && post.user) {
+  const postOwnerId = post.user._id
+    ? post.user._id.toString()
+    : post.user.toString();
+
+  if (postOwnerId !== userId) {
+    const currentUser = await User.findById(userId);
+
+    await Notification.create({
+      user: postOwnerId,
+      sender: userId,
+      type: "comment",
+      message: `${currentUser.username} commented on your post 💬`,
+      post: postId,
+    });
+
+    console.log("✅ Notification created");
+  } else {
+    console.log("⚠️ Skipped (same user)");
+  }
+}
     res.status(201).json(populatedComment);
   } catch (err) {
-    console.error('Add comment error:', err);
-    res.status(500).json({ message: 'Error adding comment', error: err.message });
+    console.error("Add comment error:", err);
+    res.status(500).json({
+      message: "Error adding comment",
+      error: err.message,
+    });
   }
 };
 
