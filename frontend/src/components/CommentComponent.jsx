@@ -8,32 +8,33 @@ const CommentComponent = ({ postId }) => {
   const navigate = useNavigate();
 
   const [showInput, setShowInput] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+const [showComments, setShowComments] = useState(false);
   const [commentTexts, setCommentTexts] = useState({});
   const [comments, setComments] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
 
   // Fetch comments when toggled
-  useEffect(() => {
-    if (showComments) {
-      const fetchComments = async () => {
-        try {
-          const res = await Api.get(
-            `/posts/comments/${postId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          setComments(res.data);
-        } catch (err) {
-          console.error("Error fetching comments:", err);
+useEffect(() => {
+  if (!showComments) return;
+
+  const fetchComments = async () => {
+    try {
+      const res = await Api.get(
+        `/posts/comments/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      };
-      fetchComments();
+      );
+      setComments(res.data);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
     }
-  }, [postId, showComments]);
+  };
+
+  fetchComments();
+}, [postId, showComments]);
 
   const handleDeleteComment = async (commentId) => {
     try {
@@ -85,9 +86,15 @@ const CommentComponent = ({ postId }) => {
   };
 
   const handleToggleComments = () => {
-    setShowInput((prev) => !prev);
-    setShowComments((prev) => !prev);
-  };
+  setShowComments((prev) => {
+    const newState = !prev;
+
+    // show input only when comments open
+    setShowInput(newState);
+
+    return newState;
+  });
+};
 
   return (
     <div>
@@ -133,11 +140,17 @@ const CommentComponent = ({ postId }) => {
             >
               <div className="flex justify-between items-start">
                 <div className="flex gap-2 items-center">
-                  <img
-                    src={`https://social-nest-1-flyx.onrender.com${comment.user?.profilepicture}`}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover border"
-                  />
+                 <img
+  src={
+    comment.user?.profilepicture?.startsWith("http")
+      ? comment.user.profilepicture
+      : comment.user?.profilepicture
+      ? `https://social-nest-1-flyx.onrender.com${comment.user.profilepicture}`
+      : "https://via.placeholder.com/40"
+  }
+  alt="Profile"
+  className="w-8 h-8 rounded-full object-cover border"
+/>
                   <div>
                     <p className="font-semibold text-sm">
                       {comment.user?.username || "Unknown"}

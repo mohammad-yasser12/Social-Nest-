@@ -1,5 +1,7 @@
 import Conversation from "../Model/Conversation.js";
 import Message from "../Model/Message.js";
+import User from "../Model/userModel.js";
+import Notification from "../Model/notificationModel.js";
 export const createOrGetConversation = async (req, res) => {
   try {
     const { receiverId } = req.body;

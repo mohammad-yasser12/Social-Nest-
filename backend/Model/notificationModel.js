@@ -16,12 +16,10 @@ const notificationSchema = new mongoose.Schema(
       default: false,
     },
 
-    expiresAt: {
-      type: Date,
-      default: () =>
-        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      index: { expires: 0 }, // MongoDB TTL
-    },
+   expiresAt: {
+  type: Date,
+  default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+},
   },
   { timestamps: true }
 );

@@ -122,13 +122,16 @@ const handleDeleteForEveryone = async (messageId) => {
      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50">
 
       <div className="flex items-center gap-3 p-4 border-b bg-white">
- <img
+<img
   onClick={() => setShowImage(true)}
   src={
-    chatUser?.profilepicture
+    chatUser?.profilepicture?.startsWith("http")
+      ? chatUser.profilepicture
+      : chatUser?.profilepicture
       ? `https://social-nest-1-flyx.onrender.com${chatUser.profilepicture}`
       : "https://via.placeholder.com/40"
   }
+  alt="profile"
   className="w-10 h-10 rounded-full object-cover cursor-pointer"
 />
 {showImage && (
@@ -136,14 +139,17 @@ const handleDeleteForEveryone = async (messageId) => {
     className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
     onClick={() => setShowImage(false)}
   >
-    <img
-      src={
-        chatUser?.profilepicture
-          ? `https://social-nest-1-flyx.onrender.com${chatUser.profilepicture}`
-          : "https://via.placeholder.com/40"
-      }
-      className="w-64 h-64 object-cover rounded-lg shadow-lg"
-    />
+   <img
+  src={
+    chatUser?.profilepicture?.startsWith("http")
+      ? chatUser.profilepicture
+      : chatUser?.profilepicture
+      ? `https://social-nest-1-flyx.onrender.com${chatUser.profilepicture}`
+      : "https://via.placeholder.com/256"
+  }
+  alt="Profile"
+  className="w-64 h-64 object-cover rounded-lg shadow-lg"
+/>
   </div>
 )}
 

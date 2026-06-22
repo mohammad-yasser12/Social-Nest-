@@ -72,27 +72,33 @@ const FollowRequests = () => {
 
   if (loading) return <p className="p-6">Loading...</p>;
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Follow Requests</h1>
 
-      {requests.length === 0 ? (
-        <p>No follow requests</p>
-      ) : (
-        <div className="space-y-4">
-          {requests.map((user) => (
+return (
+  <div className="p-6">
+    <h1 className="text-2xl font-bold mb-6">Follow Requests</h1>
+
+    {requests.length === 0 ? (
+      <p>No follow requests</p>
+    ) : (
+      <div className="space-y-4">
+        {requests
+          .filter((req) => req.sender) // ✅ remove broken data
+          .map((user) => (
             <div
               key={user._id}
               className="flex items-center justify-between p-4 bg-white shadow rounded-xl"
             >
               {/* USER */}
               <div className="flex items-center gap-3">
-               <img
-  src={getImageUrl(user.sender?.profilepicture)}
-  alt="profile"
-  className="w-12 h-12 rounded-full object-cover"
-/>
-                <p className="font-medium">{user.sender.username}</p>
+                <img
+                  src={getImageUrl(user.sender?.profilepicture)}
+                  alt="profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+
+                <p className="font-medium">
+                  {user.sender?.username || "Unknown User"}
+                </p>
               </div>
 
               {/* ACTIONS */}
@@ -113,10 +119,10 @@ const FollowRequests = () => {
               </div>
             </div>
           ))}
-        </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 };
 
 export default FollowRequests;
