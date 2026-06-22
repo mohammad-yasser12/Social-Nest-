@@ -13,7 +13,7 @@ const Inbox = () => {
   const fetchConversations = async () => {
     try {
       const res = await getConversations(token);
-      console.log(res.data); // 🔥 DEBUG
+      console.log(res.data.conversations); // 🔥 DEBUG
       setConversations(res.data.conversations);
     } catch (err) {
       console.log(err);
@@ -39,9 +39,13 @@ const Inbox = () => {
       {conversations.map((conv) => {
         console.log("Conversation ID:", conv._id);
 
-const otherUser = conv.participants?.find(
-  (p) => p._id?.toString() !== user._id?.toString()
-);
+const currentUserId = String(user._id);
+
+const otherUser =
+  conv.participants?.length > 1
+    ? conv.participants.find((p) => String(p._id) !== currentUserId)
+    : null;
+console.log("Other User:", otherUser);
         return (
           <div
             key={conv._id}
